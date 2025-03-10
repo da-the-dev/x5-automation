@@ -7,7 +7,7 @@
 - [Алексей Безгин](https://github.com/elderberry17)
 - [Алексей Ткаченко](https://github.com/da-the-dev/)
 - [Вера Краснобаева](https://github.com/Vera-bahval)
-- [Григорий Матснев]()
+- [Григорий Матснев](https://github.com/pe51k)
 - [Яков Марченков](https://github.com/RipYashok)
 
 
