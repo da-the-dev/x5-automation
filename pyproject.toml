@@ -5,10 +5,6 @@ description = "X5 case solution"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "llama-index>=0.12.23",
-    "llama-index-embeddings-huggingface>=0.5.2",
-    "llama-index-embeddings-ollama>=0.6.0",
-    "llama-index-llms-ollama>=0.5.3",
     "transformers>=4.49.0",
     "pandas>=2.2.3",
     "ipykernel>=6.29.5",
@@ -17,4 +13,8 @@ dependencies = [
     "numpy>=2.2.3",
     "pandas>=2.2.3",
     "seaborn>=0.13.2",
+    "pydantic-settings>=2.8.1",
+    "langchain>=0.3.20",
+    "langchain-openai>=0.3.8",
+    "langgraph>=0.3.5",
 ]
