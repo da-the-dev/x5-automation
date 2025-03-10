@@ -16,7 +16,7 @@ TODO
 
 ## Разработка
 ### Понадобится
-- uv
+- [uv](https://docs.astral.sh/uv/getting-started/installation/)
 ### Установка зависимостей
 - С установленным uv:
 ```
