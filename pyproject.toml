@@ -13,4 +13,7 @@ dependencies = [
     "seaborn>=0.13.2",
     "vllm>=0.7.3",
     "gradio>=5.20.1",
+    "llama-index-llms-openai-like>=0.3.4",
+    "llama-index>=0.12.23",
+    "llama-index-vector-stores-qdrant>=0.4.3",
 ]
