@@ -3,6 +3,7 @@ from llama_index.core.workflow import (
     StartEvent,
     StopEvent,
     Workflow,
+    Context,
     step,
 )
 
@@ -19,8 +20,6 @@ class SanityCheckEvent(Event):
     sane_qa: list[tuple[str, str]]
 
 
-
-
 class AssistantFlow(Workflow):
     # Addressing LLM via VLLM (for reference)
     #
@@ -30,6 +29,7 @@ class AssistantFlow(Workflow):
     #     api_key="token-123",
     #     model="Vikhrmodels/Vikhr-Llama-3.2-1B-Instruct",
     # )
+    # llm.complete("what is an atom")
 
     @step
     async def preprocess(self, ev: StartEvent) -> PreprocessEvent:
@@ -40,27 +40,28 @@ class AssistantFlow(Workflow):
         return PreprocessEvent(query_clean="query_clean")
 
     @step
-    async def retrieve(self, ev: PreprocessEvent) -> RetrieveEvent:
+    async def retrieve(self, ev: PreprocessEvent, ctx: Context) -> RetrieveEvent:
         query_clean = ev.query_clean
+        await ctx.set("query_clean", query_clean)  # Saving clean query for use later
 
         # TODO retrieve
 
         return RetrieveEvent(qa=[("q", "a")])
 
     @step
-    @step
-    async def sanity_check(self, ev: RetrieveEvent) -> SanityCheckEvent:
+    async def sanity_check(self, ev: RetrieveEvent, ctx: Context) -> SanityCheckEvent:
         qa = ev.qa
+        query_clean = await ctx.get("query_clean")
 
         # TODO sanity check
 
         return SanityCheckEvent(sane_qa=[("q", "a")])
-    
-    @step
-    async def reply(self, ev: SanityCheckEvent) -> StopEvent:
-        sane_qa = ev.sane_qa
-        
-        # TODO reply
-        
-        return StopEvent(result="result generator")
 
+    @step
+    async def reply(self, ev: SanityCheckEvent, ctx: Context) -> StopEvent:
+        sane_qa = ev.sane_qa
+        query_clean = await ctx.get("query_clean")
+
+        # TODO reply
+
+        return StopEvent(result="result generator")
