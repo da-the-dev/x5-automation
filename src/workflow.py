@@ -6,6 +6,9 @@ from llama_index.core.workflow import (
     Context,
     step,
 )
+import requests
+import json
+
 
 
 class PreprocessEvent(Event):
@@ -45,10 +48,37 @@ class AssistantFlow(Workflow):
 
     @step
     async def retrieve(self, ev: PreprocessEvent, ctx: Context) -> RetrieveEvent:
+        '''
+        We need to specify endpoints for:
+        - embedder model
+        - qdrant database
+        '''
         query_clean = ev.query_clean
         await ctx.set("query_clean", query_clean)  # Saving clean query for use later
 
         # TODO retrieve
+        # mock values
+        VLLM_HOST = "http://localhost:8000"
+        embedder_endpoint = f"{VLLM_HOST}/v1/embeddings"
+
+        headers = {
+            "Content-Type": "application/json"
+        }
+
+        # Define the data payload
+        data = {
+            "model": "elderberry17/USER-bge-m3-x5",
+            "input": [query_clean]
+        }
+
+        response = requests.post(embedder_endpoint, headers=headers, data=json.dumps(data))
+        if response.status_code == 200:
+            query_embedding = response.json().get('data', [])[0].get('embedding', [])
+            print(f"embedding len: {len(query_embedding)}")
+        else:
+            print(response.status_code)
+    
+        # TODO search similar queries from qdrant
 
         return RetrieveEvent(qa=[("q", "a")])
 
