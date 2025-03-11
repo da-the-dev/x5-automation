@@ -1,0 +1,18 @@
+services:
+  llm:
+    image: vllm/vllm-openai:latest
+    ports:
+      - 8000:8000
+    volumes:
+      - /home/sv-cheats-1/.cache/huggingface:/root/.cache/huggingface
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
+    command: --model Vikhrmodels/Vikhr-Llama-3.2-1B-Instruct
+
+volumes:
+  huggingface-cache:
