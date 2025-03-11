@@ -21,7 +21,7 @@ class DeduplicateEvent(Event):
 
 
 class SanityCheckEvent(Event):
-    sane_qa: list[tuple[str, str]]
+    qa: list[tuple[str, str]]
 
 
 class AssistantFlow(Workflow):
@@ -58,7 +58,7 @@ class AssistantFlow(Workflow):
 
         # TODO deduplicate
 
-        return RetrieveEvent(qa=[("q", "a")])
+        return DeduplicateEvent(qa=[("q", "a")])
 
     @step
     async def sanity_check(
@@ -69,11 +69,11 @@ class AssistantFlow(Workflow):
 
         # TODO sanity check
 
-        return SanityCheckEvent(sane_qa=[("q", "a")])
+        return SanityCheckEvent(qa=[("q", "a")])
 
     @step
     async def reply(self, ev: SanityCheckEvent, ctx: Context) -> StopEvent:
-        sane_qa = ev.sane_qa
+        qa = ev.qa
         query_clean = await ctx.get("query_clean")
 
         # TODO reply
