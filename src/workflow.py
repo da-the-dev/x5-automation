@@ -32,7 +32,7 @@ class AssistantFlow(Workflow):
     # )
 
     @step
-    def preprocess(self, ev: StartEvent) -> PreprocessEvent:
+    async def preprocess(self, ev: StartEvent) -> PreprocessEvent:
         query = ev.query
 
         # TODO preprocess
@@ -40,7 +40,7 @@ class AssistantFlow(Workflow):
         return PreprocessEvent(query_clean="query_clean")
 
     @step
-    def retrieve(self, ev: PreprocessEvent) -> RetrieveEvent:
+    async def retrieve(self, ev: PreprocessEvent) -> RetrieveEvent:
         query_clean = ev.query_clean
 
         # TODO retrieve
@@ -48,7 +48,7 @@ class AssistantFlow(Workflow):
         return RetrieveEvent(qa=[("q", "a")])
 
     @step
-    def retrieve(self, ev: PreprocessEvent) -> RetrieveEvent:
+    async def retrieve(self, ev: PreprocessEvent) -> RetrieveEvent:
         query_clean = ev.query_clean
 
         # TODO retrieve
@@ -56,7 +56,7 @@ class AssistantFlow(Workflow):
         return RetrieveEvent(qa=[("q", "a")])
 
     @step
-    def sanity_check(self, ev: RetrieveEvent) -> SanityCheckEvent:
+    async def sanity_check(self, ev: RetrieveEvent) -> SanityCheckEvent:
         qa = ev.qa
 
         # TODO sanity check
@@ -64,7 +64,7 @@ class AssistantFlow(Workflow):
         return SanityCheckEvent(sane_qa=[("q", "a")])
     
     @step
-    def reply(self, ev: SanityCheckEvent) -> StopEvent:
+    async def reply(self, ev: SanityCheckEvent) -> StopEvent:
         sane_qa = ev.sane_qa
         
         # TODO reply
