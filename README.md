@@ -17,6 +17,11 @@
 docker compose up -d
 ```
 
+### CLI
+```
+python -m src.cli
+```
+
 ## Разработка
 ### Понадобится
 - [uv](https://docs.astral.sh/uv/getting-started/installation/)
