@@ -15,7 +15,8 @@ async def main():
     print("Result:")
     print(result)
 
-    draw_most_recent_execution(w, filename="assistant_flow_recent.html")
+    # Optionally draw the workflow
+    # draw_most_recent_execution(w, filename="assistant_flow_recent.html")
 
 
 if __name__ == "__main__":
