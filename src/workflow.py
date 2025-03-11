@@ -48,13 +48,6 @@ class AssistantFlow(Workflow):
         return RetrieveEvent(qa=[("q", "a")])
 
     @step
-    async def retrieve(self, ev: PreprocessEvent) -> RetrieveEvent:
-        query_clean = ev.query_clean
-
-        # TODO retrieve
-
-        return RetrieveEvent(qa=[("q", "a")])
-
     @step
     async def sanity_check(self, ev: RetrieveEvent) -> SanityCheckEvent:
         qa = ev.qa
