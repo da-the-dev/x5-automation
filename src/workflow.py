@@ -19,15 +19,17 @@ class SanityCheckEvent(Event):
     sane_qa: list[tuple[str, str]]
 
 
-from llama_index.llms.openai_like import OpenAILike
 
 
 class AssistantFlow(Workflow):
-    llm = OpenAILike(
-        api_base="http://localhost:8000/v1",
-        api_key="token-123",
-        model="Vikhrmodels/Vikhr-Llama-3.2-1B-Instruct",
-    )
+    # Addressing LLM via VLLM (for reference)
+    #
+    # from llama_index.llms.openai_like import OpenAILike
+    # llm = OpenAILike(
+    #     api_base="http://localhost:8000/v1",
+    #     api_key="token-123",
+    #     model="Vikhrmodels/Vikhr-Llama-3.2-1B-Instruct",
+    # )
 
     @step
     def preprocess(self, ev: StartEvent) -> PreprocessEvent:
