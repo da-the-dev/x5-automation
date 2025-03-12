@@ -54,7 +54,7 @@ class AssistantFlow(Workflow):
 
     @step
     async def deduplicate(self, ev: RetrieveEvent, ctx: Context) -> DeduplicateEvent:
-        from src.deduplicate import deduplicate
+        from sanity_check import deduplicate
         
         qa = ev.qa
         query_clean = await ctx.get("query_clean")
