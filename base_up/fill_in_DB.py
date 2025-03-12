@@ -19,7 +19,7 @@ if __name__ == "__main__":
         for i in range(len(vectors))
     ]
 
-    client = QdrantClient(url=f"http://{sys.argv[1]}")
+    client = QdrantClient(url="http://localhost:6333")
 
     # client.delete_collection(collection_name=COLLECTION_NAME)
     client.create_collection(
