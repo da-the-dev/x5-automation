@@ -14,6 +14,7 @@
 ## Запуск
 ### Docker 
 ```
+docker compose -f langfuse.yaml up -d
 docker compose up -d
 ```
 
