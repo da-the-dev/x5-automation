@@ -1,0 +1,13 @@
+secret_key: sk-...
+public_key: pk-...
+host: http://ip:3000
+
+llm: Vikhrmodels/Vikhr-Nemo-12B-Instruct-R-21-09-24
+api_base: http://ip:8000/v1
+api_key: token-...
+
+qdrant_url: http://ip:6333
+qdrant_collection_name: collection
+qdrant_top_n: 10
+
+embedder: elderberry17/USER-bge-m3-x5-sentence
