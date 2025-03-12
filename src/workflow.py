@@ -27,26 +27,15 @@ class SanityCheckEvent(Event):
     qa: list[tuple[str, str]]
 
 
-print(config["public_key"])
 # Initialize the Langfuse instrumentor
 instrumentor = LlamaIndexInstrumentor(
-    public_key=config['public_key'],
-    secret_key=config['secret_key'],
-    host=config['host'],
+    public_key=config["public_key"],
+    secret_key=config["secret_key"],
+    host=config["host"],
 )
 
 
 class AssistantFlow(Workflow):
-    # Addressing LLM via VLLM (for reference)
-    #
-    # from llama_index.llms.openai_like import OpenAILike
-    # llm = OpenAILike(
-    #     api_base="http://localhost:8000/v1",
-    #     api_key="token-123",
-    #     model="Vikhrmodels/Vikhr-Llama-3.2-1B-Instruct",
-    # )
-    # llm.complete("what is an atom")
-
     @step
     async def preprocess(self, ev: StartEvent) -> PreprocessEvent:
         query = ev.query
@@ -79,7 +68,7 @@ class AssistantFlow(Workflow):
             else:
                 unique_answers.add(answer)
                 unique_qa_pairs.append(tuple([question, answer]))
-    
+
         return DeduplicateEvent(qa=unique_qa_pairs)
 
     @step
