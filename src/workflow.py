@@ -6,7 +6,9 @@ from llama_index.core.workflow import (
     Context,
     step,
 )
-from langfuse.llama_index import LlamaIndexInstrumentor # https://langfuse.com/docs/integrations/llama-index/get-started
+from langfuse.llama_index import LlamaIndexInstrumentor
+
+from src.config import config
 
 
 class PreprocessEvent(Event):
@@ -25,8 +27,14 @@ class SanityCheckEvent(Event):
     qa: list[tuple[str, str]]
 
 
+
+print(config["public_key"])
 # Initialize the Langfuse instrumentor
-instrumentor = LlamaIndexInstrumentor()
+instrumentor = LlamaIndexInstrumentor(
+    public_key=config["public_key"],
+    secret_key=config["secret_key"],
+    host=config["host"],
+)
 
 
 class AssistantFlow(Workflow):
@@ -94,26 +102,28 @@ class AssistantFlow(Workflow):
 
 
 # Example of how to use the workflow with Langfuse tracing
-async def run_workflow_with_tracing(query: str, session_id: str = None, user_id: str = None):
+async def run_workflow_with_tracing(
+    query: str, session_id: str = None, user_id: str = None
+):
     # Start the instrumentation
     instrumentor.start()
-    
+
     # Or use the context manager for more control over tracing parameters
     with instrumentor.observe(
         trace_id=f"assistant-flow-{query[:10]}",  # Optional custom trace ID
         session_id=session_id,
         user_id=user_id,
         name="AssistantFlow",
-        metadata={"original_query": query}
+        metadata={"original_query": query},
     ) as trace:
         # Run your workflow
         workflow = AssistantFlow()
         result = await workflow.run(query=query)
-        
+
         # Optionally add a score or update the trace
         trace.score(name="workflow_completed", value=1.0)
-        
+
     # Make sure to flush before the application exits
     instrumentor.flush()
-    
+
     return result
