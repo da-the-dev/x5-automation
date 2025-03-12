@@ -262,6 +262,15 @@ wheels = [
 ]
 
 [[package]]
+name = "backoff"
+version = "2.2.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/47/d7/5bbeb12c44d7c4f2fb5b56abce497eb5ed9f34d85701de869acedd602619/backoff-2.2.1.tar.gz", hash = "sha256:03f829f5bb1923180821643f8753b0502c3b682293992485b0eef2807afa5cba", size = 17001 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/df/73/b6e24bd22e6720ca8ee9a85a0c4a2971af8497d8f3193fa05390cbd46e09/backoff-2.2.1-py3-none-any.whl", hash = "sha256:63579f9a0628e06278f7e47b7d7d5b6ce20dc65c5e96a6f3ca99a6adca0396e8", size = 15148 },
+]
+
+[[package]]
 name = "beautifulsoup4"
 version = "4.13.3"
 source = { registry = "https://pypi.org/simple" }
@@ -1281,7 +1290,9 @@ dependencies = [
     { name = "gradio" },
     { name = "ipykernel" },
     { name = "jupyter" },
+    { name = "langfuse" },
     { name = "llama-index" },
+    { name = "llama-index-callbacks-langfuse" },
     { name = "llama-index-llms-openai-like" },
     { name = "llama-index-utils-workflow" },
     { name = "llama-index-vector-stores-qdrant" },
@@ -1296,7 +1307,9 @@ requires-dist = [
     { name = "gradio", specifier = ">=5.20.1" },
     { name = "ipykernel", specifier = ">=6.29.5" },
     { name = "jupyter", specifier = ">=1.1.1" },
+    { name = "langfuse", specifier = ">=2.59.7" },
     { name = "llama-index", specifier = ">=0.12.23" },
+    { name = "llama-index-callbacks-langfuse", specifier = ">=0.3.0" },
     { name = "llama-index-llms-openai-like", specifier = ">=0.3.4" },
     { name = "llama-index-utils-workflow", specifier = ">=0.3.0" },
     { name = "llama-index-vector-stores-qdrant", specifier = ">=0.4.3" },
@@ -1692,6 +1705,25 @@ wheels = [
 ]
 
 [[package]]
+name = "langfuse"
+version = "2.59.7"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "anyio" },
+    { name = "backoff" },
+    { name = "httpx" },
+    { name = "idna" },
+    { name = "packaging" },
+    { name = "pydantic" },
+    { name = "requests" },
+    { name = "wrapt" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/d5/0e/8390bd3a4ad92ecb1ba0462ec8b7c7d328b2e2f31ae0e734bf2f50dbdc96/langfuse-2.59.7.tar.gz", hash = "sha256:f631981705177bf53d030d191397da9b864b99729a7273448afed10d76f78e23", size = 146608 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b7/f3/420518b9003c997cdcb0a86473bf0c111181578a95565823c333cb58eb7b/langfuse-2.59.7-py3-none-any.whl", hash = "sha256:2c6890f5b842257173eb54d08f2890c7fd7617859a48b3914ef73f13a6514473", size = 260468 },
+]
+
+[[package]]
 name = "lark"
 version = "1.2.2"
 source = { registry = "https://pypi.org/simple" }
@@ -1765,6 +1797,19 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/f2/bd/7984c6964c2742991e6309e678375a7e6adef99e19e67ad95cbbb67b45a5/llama_index_agent_openai-0.4.6.tar.gz", hash = "sha256:4f66c1731836ab66c4b441255a95f33a51743e4993b8aa9daf430cb31aa7d48e", size = 10871 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/8a/1f/a0e2eed0417b1f3b6a51da159eb57640f0501e74fd502f83a254b3a55054/llama_index_agent_openai-0.4.6-py3-none-any.whl", hash = "sha256:4103e479c874cb3426aa59a13f91b6e2dc6b350c51457966631f8bdaf9a6a8e8", size = 13358 },
+]
+
+[[package]]
+name = "llama-index-callbacks-langfuse"
+version = "0.3.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "langfuse" },
+    { name = "llama-index-core" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/ae/87/da554ef82b56f6c349b4057732ebdc71c8fe8c60f2cc594383c115545c4c/llama_index_callbacks_langfuse-0.3.0.tar.gz", hash = "sha256:24c9ce0284c10c5d2cdb3ed2be9974aefc582906a8e5d9eb275c77d49e41b3b9", size = 2034 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f1/9f/37c4a22b67ec858f7d4a2fb869f6580692a149141fd68f2c3bf5dcb5c075/llama_index_callbacks_langfuse-0.3.0-py3-none-any.whl", hash = "sha256:6b29b187f94d5918d330ee5c16660a744f522d4e56e893b9ff786bd5d7e72d2d", size = 2265 },
 ]
 
 [[package]]
