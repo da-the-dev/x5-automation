@@ -90,7 +90,7 @@ class AssistantFlow(Workflow):
 
         result = await reply(query_clean, qa)
 
-        return StopEvent(result="result generator")
+        return StopEvent(result=result)
 
 
 # Example of how to use the workflow with Langfuse tracing
