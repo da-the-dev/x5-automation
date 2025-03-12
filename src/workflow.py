@@ -40,8 +40,9 @@ class AssistantFlow(Workflow):
         query = ev.query
 
         # TODO preprocess
+        query_clean = query
 
-        return PreprocessEvent(query_clean="query_clean")
+        return PreprocessEvent(query_clean=query_clean)
 
     @step
     async def retrieve(self, ev: PreprocessEvent, ctx: Context) -> RetrieveEvent:
@@ -53,12 +54,19 @@ class AssistantFlow(Workflow):
         return RetrieveEvent(qa=[("q", "a")])
 
     @step
-    async def deduplicate(self, ev: RetrieveEvent, ctx: Context) -> DeduplicateEvent:
+    async def deduplicate(self, ev: RetrieveEvent) -> DeduplicateEvent:
         qa = ev.qa
-
-        # TODO deduplicate
-
-        return DeduplicateEvent(qa=[("q", "a")])
+        unique_answers = set()
+        unique_qa_pairs = []
+        for pair in qa:
+            question, answer = pair[0], pair[1]
+            if answer in unique_answers:
+                continue
+            else:
+                unique_answers.add(answer)
+                unique_qa_pairs.append(tuple([question, answer]))
+    
+        return DeduplicateEvent(qa=unique_qa_pairs)
 
     @step
     async def sanity_check(
