@@ -1,16 +1,14 @@
 from llama_index.utils.workflow import draw_most_recent_execution
 
-from src.workflow import AssistantFlow
+from src.workflow import run_workflow_with_tracing
 
 
 async def main():
-    w = AssistantFlow(timeout=60, verbose=False)
-
     print("You:")
 
     query = input()
 
-    result = await w.run(query=query)
+    result = await run_workflow_with_tracing(query)
 
     print("Result:")
     print(result)
