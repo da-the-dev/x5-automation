@@ -35,10 +35,8 @@ def process_points(points: list[dict]) -> list[tuple[str, str]]:
 
 def retriever(query_clean: str) -> list[tuple[str, str]]:
     query_embedding = encode_query(query_clean)
-    # search_result = retrieve_points(query_embedding)
-    # search_result_clear = process_points(search_result)
+    search_result = retrieve_points(query_embedding)
+    search_result_clear = process_points(search_result)
 
-    print(len(query_embedding))
-    # return search_result_clear
-    return [("q", "a")]
+    return search_result_clear
     

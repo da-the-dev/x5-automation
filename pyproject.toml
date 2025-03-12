@@ -18,4 +18,6 @@ dependencies = [
     "llama-index-vector-stores-qdrant>=0.4.3",
     "llama-index-utils-workflow>=0.3.0",
     "llama-index-embeddings-huggingface>=0.5.2",
+    "torch>=2.5.1",
+    "qdrant-client>=1.12.1",
 ]
