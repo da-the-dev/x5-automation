@@ -1,1 +1,0 @@
-llm: Vikhrmodels/Vikhr-Nemo-12B-Instruct-R-21-09-24 --dtype half --max_model_len 15000 --api-key token-123
