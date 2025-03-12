@@ -91,7 +91,7 @@ class AssistantFlow(Workflow):
 
         from src.sanity_check import sanity_check
 
-        sane_qa = sanity_check(query_clean, qa)
+        sane_qa = await sanity_check(query_clean, qa)
 
         return SanityCheckEvent(qa=sane_qa)
 
