@@ -4,12 +4,14 @@ import json
 from src.config import config
 
 
-def sanity_check(query_clean: str, qa_pairs: list[tuple[str, str]]) -> list[tuple[str, str]]:
+def sanity_check(
+    query_clean: str, qa_pairs: list[tuple[str, str]]
+) -> list[tuple[str, str]]:
     # Initialize LLM with vLLM backend
     llm = OpenAILike(
-        api_base="http://localhost:8000/v1",
-        api_key="token-123",
-        model=config['llm'],
+        api_base=config["api_base"],
+        api_key=config["api_key"],
+        model=config["llm"],
     )
 
     # Process QA pairs in batches
@@ -31,7 +33,7 @@ def sanity_check(query_clean: str, qa_pairs: list[tuple[str, str]]) -> list[tupl
         for q, a in batch:
             prompt += f"Пара {index}:\nВопрос: {q}\nОтвет: {a}\n\n"
             index += 1
-        prompt += "Ответ должен быть в формате: [\"0\" или \"1\", \"0\" или \"1\", ...]."
+        prompt += 'Ответ должен быть в формате: ["0" или "1", "0" или "1", ...].'
 
         # Use guided_json to produce array of strings (each '0' or '1')
         # enum: ["0", "1"] ensures only '0' or '1'
@@ -40,12 +42,9 @@ def sanity_check(query_clean: str, qa_pairs: list[tuple[str, str]]) -> list[tupl
             extra_body={
                 "guided_json": {
                     "type": "array",
-                    "items": {
-                        "type": "string",
-                        "enum": ["0", "1"]
-                    }
+                    "items": {"type": "string", "enum": ["0", "1"]},
                 }
-            }
+            },
         )
         # response.text should be a JSON array of 0/1 strings
         try:

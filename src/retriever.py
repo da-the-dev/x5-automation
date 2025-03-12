@@ -2,6 +2,8 @@ from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from qdrant_client import QdrantClient
 import os
 
+from src.config import config
+
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
@@ -15,18 +17,13 @@ def encode_query(query_clean: str) -> list[float]:
 
 
 def retrieve_points(query_embedding: list[float]):
-    # TODO set variables to config and init client one time
-    QDRANT_QUERY_URL = "http://localhost:6333"
-    TOPN = 10
-    COLLECTION_NAME = "X5_database"
-
-    qdrant_client = QdrantClient(url=QDRANT_QUERY_URL)
+    qdrant_client = QdrantClient(url=config['qdrant_url'])
 
     search_result = qdrant_client.query_points(
-        collection_name=COLLECTION_NAME,
+        collection_name=config['qdrant_collection_name'],
+        limit=config['qdrant_top_n'],
         query=query_embedding,
         with_payload=True,
-        limit=TOPN,
     ).points
 
     return search_result

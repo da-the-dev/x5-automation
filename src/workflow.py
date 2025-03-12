@@ -27,13 +27,12 @@ class SanityCheckEvent(Event):
     qa: list[tuple[str, str]]
 
 
-
 print(config["public_key"])
 # Initialize the Langfuse instrumentor
 instrumentor = LlamaIndexInstrumentor(
-    public_key=config["public_key"],
-    secret_key=config["secret_key"],
-    host=config["host"],
+    public_key=config['public_key'],
+    secret_key=config['secret_key'],
+    host=config['host'],
 )
 
 
@@ -90,7 +89,7 @@ class AssistantFlow(Workflow):
         qa = ev.qa
         query_clean = await ctx.get("query_clean")
 
-        from sanity_check import sanity_check
+        from src.sanity_check import sanity_check
 
         sane_qa = sanity_check(query_clean, qa)
 
@@ -123,7 +122,7 @@ async def run_workflow_with_tracing(
         metadata={"original_query": query},
     ) as trace:
         # Run your workflow
-        workflow = AssistantFlow()
+        workflow = AssistantFlow(timeout=3 * 60)
         result = await workflow.run(query=query)
 
         # Optionally add a score or update the trace
