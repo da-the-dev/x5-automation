@@ -120,7 +120,6 @@ async def run_workflow_with_tracing(
         trace_id=f"assistant-flow-{query[:10]}",  # Optional custom trace ID
         session_id=session_id,
         user_id=user_id,
-        name="AssistantFlow",
         metadata={"original_query": query},
     ) as trace:
         # Run your workflow
