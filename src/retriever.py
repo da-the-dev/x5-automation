@@ -8,11 +8,9 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
 def encode_query(query_clean: str) -> list[float]:
-    # TODO set variables to config and init embedder_model one time
-    # TODO change to cls pooling!
-    HF_MODEL_NAME = "elderberry17/USER-bge-m3-x5"
-    embedder_model = HuggingFaceEmbedding(model_name=HF_MODEL_NAME)
+    embedder_model = HuggingFaceEmbedding(model_name=config["embedder"])
     query_embedding = embedder_model.get_text_embedding(query_clean)
+    
     return query_embedding
 
 
@@ -30,7 +28,6 @@ def retrieve_points(query_embedding: list[float]):
 
 
 def process_points(points: list[dict]) -> list[tuple[str, str]]:
-    # TODO fix hardcode
     qa_tuples = [
         (point.payload["question_clear"], point.payload["content_clear"])
         for point in points
