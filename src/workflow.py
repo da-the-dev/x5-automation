@@ -7,8 +7,6 @@ from llama_index.core.workflow import (
     step,
 )
 
-from src.retriever import retriever
-
 
 class PreprocessEvent(Event):
     query_clean: str
@@ -49,6 +47,8 @@ class AssistantFlow(Workflow):
     async def retrieve(self, ev: PreprocessEvent, ctx: Context) -> RetrieveEvent:
         query_clean = ev.query_clean
         await ctx.set("query_clean", query_clean)  # Saving clean query for use later
+
+        from src.retriever import retriever
 
         qa = retriever(query_clean)
 
