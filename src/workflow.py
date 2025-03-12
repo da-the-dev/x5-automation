@@ -7,6 +7,8 @@ from llama_index.core.workflow import (
     step,
 )
 
+from src.retriever import retriever
+
 
 class PreprocessEvent(Event):
     query_clean: str
@@ -48,9 +50,9 @@ class AssistantFlow(Workflow):
         query_clean = ev.query_clean
         await ctx.set("query_clean", query_clean)  # Saving clean query for use later
 
-        # TODO retrieve
+        qa = retriever(query_clean)
 
-        return RetrieveEvent(qa=[("q", "a")])
+        return RetrieveEvent(qa=qa)
 
     @step
     async def deduplicate(self, ev: RetrieveEvent, ctx: Context) -> DeduplicateEvent:
