@@ -20,4 +20,6 @@ dependencies = [
     "llama-index-embeddings-huggingface>=0.5.2",
     "torch>=2.5.1",
     "qdrant-client>=1.12.1",
+    "langfuse>=2.59.7",
+    "llama-index-callbacks-langfuse>=0.3.0",
 ]
