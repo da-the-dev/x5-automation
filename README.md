@@ -23,6 +23,13 @@ docker compose up -d
 python -m src.cli
 ```
 
+### UI
+```
+python -m src.cli
+```
+
+Потом перейти на `<ip>:7860`
+
 ## Разработка
 ### Понадобится
 - [uv](https://docs.astral.sh/uv/getting-started/installation/)
