@@ -91,7 +91,7 @@ async def sanity_check(
     )
 
     # Process QA pairs in batches
-    batch_size = 2  # Adjust if needed
+    batch_size = 10  # Adjust if needed
     
     # Prepare batches
     batches = [qa_pairs[i:i+batch_size] for i in range(0, len(qa_pairs), batch_size)]
