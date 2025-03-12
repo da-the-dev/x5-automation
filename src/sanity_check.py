@@ -1,13 +1,15 @@
 from llama_index.llms.openai_like import OpenAILike
 import json
 
+from src.config import config
+
 
 def sanity_check(query_clean: str, qa_pairs: list[tuple[str, str]]) -> list[tuple[str, str]]:
     # Initialize LLM with vLLM backend
     llm = OpenAILike(
         api_base="http://localhost:8000/v1",
         api_key="token-123",
-        model="Vikhrmodels/Vikhr-Llama-3.2-1B-Instruct",
+        model=config['llm'],
     )
 
     # Process QA pairs in batches

@@ -5,7 +5,6 @@ import os
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
-
 def encode_query(query_clean: str) -> list[float]:
     # TODO set variables to config and init embedder_model one time
     # TODO change to cls pooling!
@@ -27,7 +26,7 @@ def retrieve_points(query_embedding: list[float]):
         collection_name=COLLECTION_NAME,
         query=query_embedding,
         with_payload=True,
-        limit=TOPN
+        limit=TOPN,
     ).points
 
     return search_result
@@ -35,7 +34,10 @@ def retrieve_points(query_embedding: list[float]):
 
 def process_points(points: list[dict]) -> list[tuple[str, str]]:
     # TODO fix hardcode
-    qa_tuples = [(point.payload['question_clear'], point.payload['content_clear']) for point in points]
+    qa_tuples = [
+        (point.payload["question_clear"], point.payload["content_clear"])
+        for point in points
+    ]
     return qa_tuples
 
 
@@ -45,4 +47,3 @@ def retriever(query_clean: str) -> list[tuple[str, str]]:
     search_result_clear = process_points(search_result)
 
     return search_result_clear
-    

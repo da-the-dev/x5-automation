@@ -1,10 +1,13 @@
+from src.config import config
+
+
 async def reply(query_clean: str, qa: list[tuple[str, str]]) -> str:
     from llama_index.llms.openai_like import OpenAILike
 
     llm = OpenAILike(
         api_base="http://51.250.7.86:8000/v1",
         api_key="token-123",
-        model="Vikhrmodels/Vikhr-Nemo-12B-Instruct-R-21-09-24",
+        model=config['llm'],
         max_tokens=512,
         temperature=0.5,
     )
