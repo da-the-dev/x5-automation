@@ -1287,7 +1287,9 @@ dependencies = [
     { name = "llama-index-vector-stores-qdrant" },
     { name = "matplotlib" },
     { name = "pandas" },
+    { name = "qdrant-client" },
     { name = "seaborn" },
+    { name = "torch" },
     { name = "vllm" },
 ]
 
@@ -1302,7 +1304,9 @@ requires-dist = [
     { name = "llama-index-vector-stores-qdrant", specifier = ">=0.4.3" },
     { name = "matplotlib", specifier = ">=3.10.1" },
     { name = "pandas", specifier = ">=2.2.3" },
+    { name = "qdrant-client", specifier = ">=1.12.1" },
     { name = "seaborn", specifier = ">=0.13.2" },
+    { name = "torch", specifier = ">=2.5.1" },
     { name = "vllm", specifier = ">=0.7.3" },
 ]
 
