@@ -54,13 +54,12 @@ class AssistantFlow(Workflow):
 
     @step
     async def deduplicate(self, ev: RetrieveEvent, ctx: Context) -> DeduplicateEvent:
-        from sanity_check import sanity_check
-        
         qa = ev.qa
         query_clean = await ctx.get("query_clean")
-        filtered_qa = sanity_check(query_clean, qa)
 
-        return DeduplicateEvent(qa=filtered_qa)
+        # TODO deduplicate
+
+        return DeduplicateEvent(qa=[("q", "a")])
 
     @step
     async def sanity_check(
@@ -69,9 +68,11 @@ class AssistantFlow(Workflow):
         qa = ev.qa
         query_clean = await ctx.get("query_clean")
 
-        # TODO sanity check
+        from sanity_check import sanity_check
 
-        return SanityCheckEvent(qa=[("q", "a")])
+        sane_qa = sanity_check(query_clean, qa)
+
+        return SanityCheckEvent(qa=sane_qa)
 
     @step
     async def reply(self, ev: SanityCheckEvent, ctx: Context) -> StopEvent:
