@@ -1,5 +1,3 @@
-from typing import Union
-
 from llama_index.core.workflow import (
     Event,
     StartEvent,
@@ -75,11 +73,11 @@ class AssistantFlow(Workflow):
         sane_qa = await sanity_check(query_clean, qa)
 
         return SanityCheckEvent(qa=sane_qa)
-    
+
     @step
     async def is_there_qa_examples(
-        self, ev: SanityCheckEvent, ctx: Context
-    ) -> Union[HasQAExamplesEvent, GalaOtmenaEvent]:
+        self, ev: SanityCheckEvent
+    ) -> HasQAExamplesEvent | GalaOtmenaEvent:
         # Check if there are any QA examples
         qa = ev.qa
         # If there are QA examples, continue
