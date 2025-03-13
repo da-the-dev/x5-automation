@@ -38,4 +38,5 @@ server = [
     "qdrant-client>=1.12.1",
     # "vllm>=0.7.3",
     "gradio>=5.20.1",
+    "pymorphy3>=2.0.3",
 ]
