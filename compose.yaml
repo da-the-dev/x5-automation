@@ -182,8 +182,6 @@ services:
       - langfuse
 
 volumes:
-  # huggingface-cache:
-  # qdrant-storage:
   langfuse_postgres_data:
     driver: local
   langfuse_clickhouse_data:
