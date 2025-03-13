@@ -558,6 +558,15 @@ wheels = [
 ]
 
 [[package]]
+name = "dawg2-python"
+version = "0.9.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/2d/03/85171ce1e59088237aebf21943d1136463f6422820f096ac8cf9322aa851/dawg2_python-0.9.0.tar.gz", hash = "sha256:adea0312acd1a958659e8448ce6899046c0858d0b6c8949a51eebdeb5a113e4a", size = 10278 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/84/3b/7fb4c1a8df59cb80f5f7ecb9646280e000f9ba2ccff8710205dc9aa4604f/dawg2_python-0.9.0-py3-none-any.whl", hash = "sha256:4fab6fc097bd176cd783cd8421b757348ea5a460789e53b0f6bb64831380bab5", size = 9331 },
+]
+
+[[package]]
 name = "debugpy"
 version = "1.8.13"
 source = { registry = "https://pypi.org/simple" }
@@ -1305,6 +1314,7 @@ dependencies = [
     { name = "llama-index-vector-stores-qdrant" },
     { name = "matplotlib" },
     { name = "pandas" },
+    { name = "pymorphy3" },
     { name = "qdrant-client" },
     { name = "seaborn" },
     { name = "torch" },
@@ -1339,6 +1349,7 @@ requires-dist = [
     { name = "llama-index-vector-stores-qdrant", specifier = ">=0.4.3" },
     { name = "matplotlib", specifier = ">=3.10.1" },
     { name = "pandas", specifier = ">=2.2.3" },
+    { name = "pymorphy3", specifier = ">=2.0.3" },
     { name = "qdrant-client", specifier = ">=1.12.1" },
     { name = "seaborn", specifier = ">=0.13.2" },
     { name = "torch", specifier = ">=2.5.1" },
@@ -3121,6 +3132,29 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/7c/2d/c3338d48ea6cc0feb8446d8e6937e1408088a72a39937982cc6111d17f84/pygments-2.19.1.tar.gz", hash = "sha256:61c16d2a8576dc0649d9f39e089b5f02bcd27fba10d8fb4dcc28173f7a45151f", size = 4968581 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/8a/0b/9fcc47d19c48b59121088dd6da2488a49d5f72dacf8262e2790a1d2c7d15/pygments-2.19.1-py3-none-any.whl", hash = "sha256:9ea1544ad55cecf4b8242fab6dd35a93bbce657034b0611ee383099054ab6d8c", size = 1225293 },
+]
+
+[[package]]
+name = "pymorphy3"
+version = "2.0.3"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "dawg2-python" },
+    { name = "pymorphy3-dicts-ru" },
+    { name = "setuptools" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/52/cc/4ab79e53d14ce9e19fea2dc458547663e122ca16464a71c272ddb46f2111/pymorphy3-2.0.3.tar.gz", hash = "sha256:d9579920de3d9e7de3e0ea914fbfc32e8b38cd3e4a6837f675a516d6f577dd56", size = 97098 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/fc/9b/3480f9ba338b1adc6585978c9a8febc81933e9bb240c6cc093ca4b58021c/pymorphy3-2.0.3-py3-none-any.whl", hash = "sha256:431d3b30449d282b84272a41419ffec54039065bcd08d54c1b0cf26ef61fa38b", size = 53813 },
+]
+
+[[package]]
+name = "pymorphy3-dicts-ru"
+version = "2.4.417150.4580142"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/ba/13/02ffe6893a777add5c8a43f212f31a3f6a03e7d44a484cf7b5ac5381fddb/pymorphy3-dicts-ru-2.4.417150.4580142.tar.gz", hash = "sha256:39ab379d4ca905bafed50f5afc3a3de6f9643605776fbcabc4d3088d4ed382b0", size = 8381569 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b0/67/469e9e52d046863f5959928794d3067d455a77f580bf4a662630a43eb426/pymorphy3_dicts_ru-2.4.417150.4580142-py2.py3-none-any.whl", hash = "sha256:718bac64c73c10c16073a199402657283d9b64c04188b694f6d3e9b0d85440f4", size = 8442043 },
 ]
 
 [[package]]

@@ -23,6 +23,7 @@ dependencies = [
     "langfuse>=2.59.7",
     "llama-index-callbacks-langfuse>=0.3.0",
     "gradio-client>=1.7.2",
+    "pymorphy3>=2.0.3",
 ]
 
 [dependency-groups]
