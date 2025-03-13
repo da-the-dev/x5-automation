@@ -1,14 +1,14 @@
 import os
+from os import getenv
 import aiohttp
 from qdrant_client import QdrantClient
 
-from src.config import config
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
 async def encode_query(query_clean: str) -> list[float]:
-    embedder_endpoint = f"{config['api_base_emb']}/embeddings"
+    embedder_endpoint = f"{getenv('VLLM_EMB_BASE_API')}/embeddings"
 
     headers = {"Content-Type": "application/json"}
 
@@ -31,11 +31,11 @@ async def encode_query(query_clean: str) -> list[float]:
 
 
 def retrieve_points(query_embedding: list[float]):
-    qdrant_client = QdrantClient(url=config["qdrant_url"])
+    qdrant_client = QdrantClient(url=os.getenv("QDRANT_URL"))
 
     search_result = qdrant_client.query_points(
-        collection_name=config["qdrant_collection_name"],
-        limit=config["qdrant_top_n"],
+        collection_name=getenv("QDRANT_COLLECTION_NAME"),
+        limit=getenv("QDRANT_TOP_N"),
         query=query_embedding,
         with_payload=True,
     ).points
