@@ -15,6 +15,22 @@ services:
     command: --model Vikhrmodels/Vikhr-Nemo-12B-Instruct-R-21-09-24 --dtype half --max_model_len 15000 --api-key token-123
     networks:
       - x5
+  embedder:
+    image: vllm/vllm-openai:latest
+    ports:
+      - 8001:8000
+    volumes:
+      - ${HOME}/.cache/huggingface:/root/.cache/huggingface
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
+    command: --model elderberry17/USER-bge-m3-x5-sentence
+    networks:
+      - x5
 
   qdrant:
     image: qdrant/qdrant

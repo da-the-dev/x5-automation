@@ -54,7 +54,7 @@ class AssistantFlow(Workflow):
 
         from src.retriever import retriever
 
-        qa = retriever(query_clean)
+        qa = await retriever(query_clean)
 
         return RetrieveEvent(qa=qa)
 
@@ -115,9 +115,6 @@ async def run_workflow_with_tracing(
         # Run your workflow
         workflow = AssistantFlow(timeout=3 * 60)
         result = await workflow.run(query=query)
-
-        # Optionally add a score or update the trace
-        trace.score(name="workflow_completed", value=1.0)
 
     # Make sure to flush before the application exits
     instrumentor.flush()
