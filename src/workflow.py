@@ -1,3 +1,5 @@
+from typing import Union
+
 from llama_index.core.workflow import (
     Event,
     StartEvent,
@@ -22,6 +24,26 @@ class DeduplicateEvent(Event):
 
 class SanityCheckEvent(Event):
     qa: list[tuple[str, str]]
+
+
+class IsThereQAExamplesEvent(Event):
+    qa: list[tuple[str, str]]
+
+
+class HasQAExamplesEvent(Event):
+    qa: list[tuple[str, str]]
+
+
+class GalaOtmenaEvent(Event):
+    qa: list[tuple[str, str]]
+
+
+# Initialize the Langfuse instrumentor
+instrumentor = LlamaIndexInstrumentor(
+    public_key=config["public_key"],
+    secret_key=config["secret_key"],
+    host=config["host"],
+)
 
 
 class AssistantFlow(Workflow):
@@ -73,9 +95,22 @@ class AssistantFlow(Workflow):
         sane_qa = await sanity_check(query_clean, qa)
 
         return SanityCheckEvent(qa=sane_qa)
+    
+    @step
+    async def is_there_qa_examples(
+        self, ev: SanityCheckEvent, ctx: Context
+    ) -> Union[HasQAExamplesEvent, GalaOtmenaEvent]:
+        # Check if there are any QA examples
+        qa = ev.qa
+        # If there are QA examples, continue
+        if len(qa) == 0:
+            return GalaOtmenaEvent(qa=qa)
+        # Else return GalaOtmena
+        else:
+            return HasQAExamplesEvent(qa=qa)
 
     @step
-    async def reply(self, ev: SanityCheckEvent, ctx: Context) -> StopEvent:
+    async def reply(self, ev: HasQAExamplesEvent, ctx: Context) -> StopEvent:
         qa = ev.qa
         query_clean = await ctx.get("query_clean")
 
@@ -84,3 +119,31 @@ class AssistantFlow(Workflow):
         result = await reply(query_clean, qa)
 
         return StopEvent(result=result)
+    
+    @step
+    async def gala_otmena(self, ev: GalaOtmenaEvent) -> StopEvent:
+        return StopEvent(result="К сожалению, у меня недостаточно информации, чтобы ответить на ваш запрос. Переключаю на оператора...")
+
+
+# Example of how to use the workflow with Langfuse tracing
+async def run_workflow_with_tracing(
+    query: str, session_id: str = None, user_id: str = None
+):
+    # Start the instrumentation
+    instrumentor.start()
+
+    # Or use the context manager for more control over tracing parameters
+    with instrumentor.observe(
+        trace_id=f"assistant-flow-{query[:10]}",  # Optional custom trace ID
+        session_id=session_id,
+        user_id=user_id,
+        metadata={"original_query": query},
+    ) as trace:
+        # Run your workflow
+        workflow = AssistantFlow(timeout=3 * 60)
+        result = await workflow.run(query=query)
+
+    # Make sure to flush before the application exits
+    instrumentor.flush()
+
+    return result
