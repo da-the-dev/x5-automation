@@ -13,7 +13,7 @@ def clear_spaces_inside(text):
     return text_clear
 
 
-def filter_irrelevant_info(text):
+def preprocess(text):
 
     greeting_words = {
         "здравствуйте",
