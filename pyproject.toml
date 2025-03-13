@@ -22,4 +22,19 @@ dependencies = [
     "qdrant-client>=1.12.1",
     "langfuse>=2.59.7",
     "llama-index-callbacks-langfuse>=0.3.0",
+    "gradio-client>=1.7.2",
+]
+
+[dependency-groups]
+server = [
+    "langfuse>=2.59.7",
+    "llama-index>=0.12.23",
+    "llama-index-callbacks-langfuse>=0.3.0",
+    "llama-index-embeddings-huggingface>=0.5.2",
+    "llama-index-llms-openai-like>=0.3.4",
+    "llama-index-utils-workflow>=0.3.0",
+    "llama-index-vector-stores-qdrant>=0.4.3",
+    "qdrant-client>=1.12.1",
+    # "vllm>=0.7.3",
+    "gradio>=5.20.1",
 ]
