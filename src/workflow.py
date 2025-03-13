@@ -8,6 +8,7 @@ from llama_index.core.workflow import (
 )
 from langfuse.llama_index import LlamaIndexInstrumentor
 
+
 from src.config import config
 
 
@@ -40,8 +41,9 @@ class AssistantFlow(Workflow):
     async def preprocess(self, ev: StartEvent) -> PreprocessEvent:
         query = ev.query
 
-        # TODO preprocess
-        query_clean = query
+        from src.preprocess import preprocess
+
+        query_clean = preprocess()
 
         return PreprocessEvent(query_clean=query_clean)
 
