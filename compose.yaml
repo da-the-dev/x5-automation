@@ -15,6 +15,7 @@ services:
     command: --model Vikhrmodels/Vikhr-Nemo-12B-Instruct-R-21-09-24 --dtype half --max_model_len 15000 --api-key token-123
     networks:
       - x5
+      
   embedder:
     image: vllm/vllm-openai:latest
     ports:
@@ -43,13 +44,16 @@ services:
       - x5
 
   ui:
-    image: ghcr.io/da-the-dev/x5-automation
+    # image: ghcr.io/da-the-dev/x5-automation
+    build: 
+      context: .
+    pull_policy: build
     ports:
       - 7860:7860
     networks:
       - x5
-    secrets:
-      - config.yaml
+    env_file:
+      - .env
     environment:
       - PROD=true
 
@@ -221,8 +225,3 @@ volumes:
 networks:
   langfuse:
   x5:
-
-
-secrets:
-  config.yaml:
-    file: ./config.yaml

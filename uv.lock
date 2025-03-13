@@ -1312,6 +1312,7 @@ dependencies = [
     { name = "qdrant-client" },
     { name = "seaborn" },
     { name = "torch" },
+    { name = "uvicorn" },
     { name = "vllm" },
 ]
 
@@ -1325,6 +1326,7 @@ prod = [
     { name = "llama-index-vector-stores-qdrant" },
     { name = "pymorphy3" },
     { name = "qdrant-client" },
+    { name = "uvicorn" },
 ]
 
 [package.metadata]
@@ -1345,6 +1347,7 @@ requires-dist = [
     { name = "qdrant-client", specifier = ">=1.12.1" },
     { name = "seaborn", specifier = ">=0.13.2" },
     { name = "torch", specifier = ">=2.5.1" },
+    { name = "uvicorn", specifier = ">=0.34.0" },
     { name = "vllm", specifier = ">=0.7.3" },
 ]
 
@@ -1358,6 +1361,7 @@ prod = [
     { name = "llama-index-vector-stores-qdrant", specifier = ">=0.4.3" },
     { name = "pymorphy3", specifier = ">=2.0.3" },
     { name = "qdrant-client", specifier = ">=1.12.1" },
+    { name = "uvicorn", specifier = ">=0.34.0" },
 ]
 
 [[package]]

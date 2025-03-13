@@ -7,9 +7,6 @@ from llama_index.core.workflow import (
     step,
 )
 
-from src.config import config
-from src.workflow import AssistantFlow
-
 
 class PreprocessEvent(Event):
     query_clean: str

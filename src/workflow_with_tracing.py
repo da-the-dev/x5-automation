@@ -1,14 +1,14 @@
+from os import getenv
 from langfuse.llama_index import LlamaIndexInstrumentor
 
-from src.config import config
 from src.workflow import AssistantFlow
 
 
 # Initialize the Langfuse instrumentor
 instrumentor = LlamaIndexInstrumentor(
-    public_key=config["public_key"],
-    secret_key=config["secret_key"],
-    host=config["host"],
+    public_key=getenv("LANGFUSE_PUBLIC_KEY"),
+    secret_key=getenv("LANGFUSE_SECRET_KEY"),
+    host=getenv("LANGFUSE_HOST"),
 )
 
 
