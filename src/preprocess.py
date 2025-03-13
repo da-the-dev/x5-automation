@@ -13,8 +13,7 @@ def clear_spaces_inside(text):
     return text_clear
 
 
-def preprocess(text):
-
+def preprocess(text: str) -> str:
     greeting_words = {
         "здравствуйте",
         "здравствуй",
@@ -132,10 +131,3 @@ def preprocess(text):
     filtered_text = " ".join(filtered_tokens)
     filtered_text = re.sub(r"\s+", " ", filtered_text)
     return filtered_text.strip()
-
-
-def preprocess(text: str) -> str:
-    text = clear_spaces_inside(text)
-    text = filter_irrelevant_info(text)
-
-    return text
