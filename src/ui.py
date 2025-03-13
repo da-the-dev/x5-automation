@@ -60,11 +60,11 @@ with gr.Blocks(title="X5", fill_height=True) as demo:
     clear = gr.ClearButton([chat_input, chatbot], value="Очистить")
 
     chat_msg = chat_input.submit(
-        add_message, [chatbot, chat_input], [chatbot, chat_input]
+        add_message, [chatbot, chat_input], [chatbot, chat_input], show_api=False
     )
     bot_msg = chat_msg.then(bot, [chatbot], chatbot, api_name="bot_response")
 
-    chatbot.like(print_like_dislike, chatbot, None)
+    chatbot.like(print_like_dislike, chatbot, None, show_api=False)
 
 if __name__ == "__main__":
     demo.launch(server_name="0.0.0.0")
