@@ -43,7 +43,7 @@ class AssistantFlow(Workflow):
 
         from src.preprocess import preprocess
 
-        query_clean = preprocess()
+        query_clean = preprocess(query)
 
         return PreprocessEvent(query_clean=query_clean)
 
