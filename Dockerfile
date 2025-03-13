@@ -12,7 +12,7 @@ COPY pyproject.toml .
 COPY uv.lock .
 
 # Install dependencies
-RUN uv sync --only-group server --frozen
+RUN uv sync --only-group prod
 
 # Create a new stage for the final image
 FROM python:3.12-slim
