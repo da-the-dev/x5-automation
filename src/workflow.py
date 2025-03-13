@@ -1,3 +1,5 @@
+from typing import Union
+
 from llama_index.core.workflow import (
     Event,
     StartEvent,
@@ -25,6 +27,18 @@ class DeduplicateEvent(Event):
 
 
 class SanityCheckEvent(Event):
+    qa: list[tuple[str, str]]
+
+
+class IsThereQAExamplesEvent(Event):
+    qa: list[tuple[str, str]]
+
+
+class HasQAExamplesEvent(Event):
+    qa: list[tuple[str, str]]
+
+
+class GalaOtmenaEvent(Event):
     qa: list[tuple[str, str]]
 
 
@@ -85,9 +99,22 @@ class AssistantFlow(Workflow):
         sane_qa = await sanity_check(query_clean, qa)
 
         return SanityCheckEvent(qa=sane_qa)
+    
+    @step
+    async def is_there_qa_examples(
+        self, ev: SanityCheckEvent, ctx: Context
+    ) -> Union[HasQAExamplesEvent, GalaOtmenaEvent]:
+        # Check if there are any QA examples
+        qa = ev.qa
+        # If there are QA examples, continue
+        if len(qa) == 0:
+            return GalaOtmenaEvent(qa=qa)
+        # Else return GalaOtmena
+        else:
+            return HasQAExamplesEvent(qa=qa)
 
     @step
-    async def reply(self, ev: SanityCheckEvent, ctx: Context) -> StopEvent:
+    async def reply(self, ev: HasQAExamplesEvent, ctx: Context) -> StopEvent:
         qa = ev.qa
         query_clean = await ctx.get("query_clean")
 
@@ -96,6 +123,10 @@ class AssistantFlow(Workflow):
         result = await reply(query_clean, qa)
 
         return StopEvent(result=result)
+    
+    @step
+    async def gala_otmena(self, ev: GalaOtmenaEvent) -> StopEvent:
+        return StopEvent(result="К сожалению, у меня недостаточно информации, чтобы ответить на ваш запрос. Переключаю на оператора...")
 
 
 # Example of how to use the workflow with Langfuse tracing
