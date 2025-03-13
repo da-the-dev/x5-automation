@@ -42,6 +42,13 @@ services:
     networks:
       - x5
 
+  ui:
+    image: ghcr.io/da-the-dev/x5-automation
+    ports:
+      - 7860:7860
+    networks:
+      - x5
+
   langfuse-worker:
     image: langfuse/langfuse-worker:3
     restart: always

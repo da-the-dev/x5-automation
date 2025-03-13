@@ -14,21 +14,9 @@
 ## Запуск
 ### Docker 
 ```
-docker compose -f langfuse.yaml up -d
 docker compose up -d
 ```
 
-### CLI
-```
-python -m src.cli
-```
-
-### UI
-```
-python -m src.cli
-```
-
-Потом перейти на `<ip>:7860`
 
 ## Разработка
 ### Понадобится

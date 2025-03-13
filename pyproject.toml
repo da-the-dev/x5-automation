@@ -5,29 +5,27 @@ description = "X5 case solution"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "pandas>=2.2.3",
+    "gradio>=5.20.1",
+    "gradio-client>=1.7.2",
     "ipykernel>=6.29.5",
     "jupyter>=1.1.1",
+    "langfuse>=2.59.7",
+    "llama-index>=0.12.23",
+    "llama-index-callbacks-langfuse>=0.3.0",
+    "llama-index-llms-openai-like>=0.3.4",
+    "llama-index-utils-workflow>=0.3.0",
+    "llama-index-vector-stores-qdrant>=0.4.3",
     "matplotlib>=3.10.1",
     "pandas>=2.2.3",
-    "seaborn>=0.13.2",
-    "vllm>=0.7.3",
-    "gradio>=5.20.1",
-    "llama-index-llms-openai-like>=0.3.4",
-    "llama-index>=0.12.23",
-    "llama-index-vector-stores-qdrant>=0.4.3",
-    "llama-index-utils-workflow>=0.3.0",
-    "llama-index-embeddings-huggingface>=0.5.2",
-    "torch>=2.5.1",
-    "qdrant-client>=1.12.1",
-    "langfuse>=2.59.7",
-    "llama-index-callbacks-langfuse>=0.3.0",
-    "gradio-client>=1.7.2",
     "pymorphy3>=2.0.3",
+    "qdrant-client>=1.12.1",
+    "seaborn>=0.13.2",
+    "torch>=2.5.1",
+    "vllm>=0.7.3",
 ]
 
 [dependency-groups]
-server = [
+prod = [
     "langfuse>=2.59.7",
     "llama-index>=0.12.23",
     "llama-index-callbacks-langfuse>=0.3.0",
@@ -36,4 +34,5 @@ server = [
     "qdrant-client>=1.12.1",
     "gradio>=5.20.1",
     "pymorphy3>=2.0.3",
+    "gradio>=5.20.1",
 ]
