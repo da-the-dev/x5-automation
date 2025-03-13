@@ -87,3 +87,5 @@ venv/
 
 # VS Code
 .vscode/
+
+base_up/
