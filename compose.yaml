@@ -48,6 +48,10 @@ services:
       - 7860:7860
     networks:
       - x5
+    secrets:
+      - config.yaml
+    environment:
+      - PROD=true
 
   langfuse-worker:
     image: langfuse/langfuse-worker:3
@@ -217,3 +221,8 @@ volumes:
 networks:
   langfuse:
   x5:
+
+
+secrets:
+  config.yaml:
+    file: ./config.yaml
