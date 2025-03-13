@@ -10,7 +10,7 @@
 .taskcluster.yml
 
 # Docker
-docker-compose.yml
+compose.yaml
 Dockerfile
 .docker
 .dockerignore
@@ -89,3 +89,4 @@ venv/
 .vscode/
 
 base_up/
+config*.yaml
