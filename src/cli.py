@@ -1,6 +1,6 @@
 from llama_index.utils.workflow import draw_most_recent_execution
 
-from src.workflow import run_workflow_with_tracing
+from src.workflow_with_tracing import run_workflow_with_tracing
 
 
 async def main():
