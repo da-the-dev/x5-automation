@@ -18,7 +18,7 @@ RUN uv sync --only-group prod
 FROM python:3.12-slim
 
 # Copy the rest of the project
-COPY . .
+COPY . /app
 
 # Copy the virtual environment from the previous stage
 COPY --from=builder /app/.venv /app/.venv
@@ -28,6 +28,8 @@ ENV PATH="/app/.venv/bin:$PATH"
 
 # Expose the port for Gradio
 EXPOSE 7860
+
+WORKDIR /app
 
 # Run the Gradio app by default
 CMD ["python", "-m", "src.ui"]
