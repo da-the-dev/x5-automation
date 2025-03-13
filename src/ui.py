@@ -2,7 +2,7 @@ import gradio as gr
 from langfuse import Langfuse
 
 from src.config import config
-from src.workflow import run_workflow_with_tracing
+from src.workflow_with_tracing import run_workflow_with_tracing
 
 langfuse = Langfuse(
     secret_key=config["secret_key"],
