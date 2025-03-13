@@ -1,6 +1,12 @@
 # Use a base Python image
 FROM python:3.12-slim AS builder
 
+# ENV vars
+ENV PYTHONUNBUFFERED=1 \
+    GRADIO_SERVER_NAME=0.0.0.0 \
+    GRADIO_SERVER_PORT=7860 \
+    PATH="/app/.venv/bin:$PATH"
+
 # Install uv
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
@@ -11,22 +17,13 @@ WORKDIR /app
 COPY pyproject.toml .
 
 # Install dependencies
-RUN uv sync
+RUN uv sync --only-group prod
 
-# Copy the rest of the project
+# Copy the project
 COPY . .
-
-# Create a new stage for the final image
-FROM python:3.12-slim
-
-# Copy the virtual environment from the previous stage
-COPY --from=builder /app/.venv /app/.venv
-
-# Set environment variables
-ENV PATH="/app/.venv/bin:$PATH"
 
 # Expose the port for Gradio
 EXPOSE 7860
 
 # Run the Gradio app by default
-CMD ["uv", "run", "gradio_app.py"]
+CMD ["python", "-m", "src.ui"]

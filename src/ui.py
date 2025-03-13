@@ -1,11 +1,14 @@
 import gradio as gr
-from os import getenv
 from langfuse import Langfuse
+from os import getenv
+from dotenv import find_dotenv, load_dotenv
 
 from src.workflow_with_tracing import run_workflow_with_tracing
-from src.config import load
 
-load()
+
+if not getenv("PROD"):
+    load_dotenv(find_dotenv())
+
 
 langfuse = Langfuse(
     public_key=getenv("LANGFUSE_PUBLIC_KEY"),
@@ -45,7 +48,6 @@ def print_like_dislike(history: gr.Chatbot, x: gr.LikeData):
     )
 
 
-print("defining blocks...")
 with gr.Blocks(title="X5", fill_height=True) as demo:
     chatbot = gr.Chatbot(
         elem_id="chatbot",
@@ -70,6 +72,5 @@ with gr.Blocks(title="X5", fill_height=True) as demo:
 
     chatbot.like(print_like_dislike, chatbot, None, show_api=False)
 
-print("starting...")
+
 demo.launch()
-print("started")
