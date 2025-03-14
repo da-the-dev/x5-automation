@@ -23,11 +23,25 @@ async def reply(query_clean: str, qa: list[tuple[str, str]]) -> str:
         "Используй предоставленные вопросы и ответы как образец стиля и уровня детализации."
     )
 
-    messages = [
-        {"role": "system", "content": system_prompt},
-        {"role": "documents", "content": json.dumps(documents, ensure_ascii=False)},
-        {"role": "user", "content": f"Запрос пользователя: {query_clean}"},
-    ]
+    if settings.llm.MODEL == "Vikhrmodels/Vikhr-Nemo-12B-Instruct-R-21-09-24":
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "documents", "content": json.dumps(documents, ensure_ascii=False)},
+            {"role": "user", "content": f"Запрос пользователя: {query_clean}"},
+        ]
+    else:
+        # For other models, format documents in prompt
+        examples_text = ""
+        for idx, doc in enumerate(documents):
+            examples_text += f"Пример {idx+1}:\nВопрос: {doc['title']}\nОтвет: {doc['content']}\n\n"
+        
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {
+                "role": "user", 
+                "content": f"Примеры вопросов и ответов:\n\n{examples_text}\n\nЗапрос пользователя: {query_clean}\n\nОтветь на запрос пользователя в том же стиле, что и приведенные примеры."
+            }
+        ]
 
     # Make async API call
     response = await llm.chat.completions.create(
