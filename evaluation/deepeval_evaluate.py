@@ -1,10 +1,16 @@
+from dotenv import find_dotenv, load_dotenv
 from langfuse import Langfuse
 from deepeval import evaluate
 from deepeval.test_case import LLMTestCase
 from deepeval.metrics import ContextualRelevancyMetric
 from datetime import datetime
+from os import getenv
 import os
-from src.config import config
+
+ 
+if not os.getenv("PROD"):
+   load_dotenv(find_dotenv())
+
  
 os.environ['OPENAI_API_KEY'] = ""
 
@@ -77,9 +83,9 @@ def write_score(langfuse, trace_id, score):
 
 if __name__ == "__main__":
     langfuse = Langfuse(
-        public_key=config["public_key"],
-        secret_key=config["secret_key"],
-        host=config["host"]
+        public_key=getenv("LANGFUSE_PUBLIC_KEY"),
+        secret_key=getenv("LANGFUSE_SECRET_KEY"),
+        host=getenv("LANGFUSE_HOST"),
     )
 
     now = datetime.now()
