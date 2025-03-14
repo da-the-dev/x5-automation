@@ -19,12 +19,19 @@ def add_message(history: list, message: str):
 
 async def bot(history: list):
     msg = {"role": "assistant", "content": ""}
-
     query = history[-1]["content"]
 
-    content = await run_workflow_with_tracing(query)
-
-    msg["content"] = content
+    try:
+        content = await run_workflow_with_tracing(query)
+        msg["content"] = content
+    except Exception as e:
+        error_message = (
+            "Произошла ошибка при обработке вашего запроса. "
+            "Пожалуйста, попробуйте позже или обратитесь в службу поддержки."
+        )
+        msg["content"] = error_message
+        # Log the actual error for debugging
+        print(f"Error processing query '{query}': {str(e)}")
 
     history.append(msg)
     return history

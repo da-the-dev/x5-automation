@@ -19,26 +19,18 @@ async def run_workflow_with_tracing(
         # Start the instrumentation
         instrumentor.start()
     
-        # Or use the context manager for more control over tracing parameters
+        # Use the context manager for tracing parameters
         with instrumentor.observe(
-            trace_id=f"assistant-flow-{query[:10]}",  # Optional custom trace ID
+            trace_id=f"assistant-flow-{query[:10]}",
             session_id=session_id,
             user_id=user_id,
             metadata={
                 "query": query,
                 "llm": settings.llm.MODEL,
             },
-        ) as trace:
-                # Run your workflow
-                workflow = AssistantFlow(timeout=3 * 60)
-                result = await workflow.run(query=query)
-
-    except Exception as e:
-        print(f"Error: {e}")
-        result = "An error occurred"
-
+        ):
+            workflow = AssistantFlow(timeout=3 * 60)
+            return await workflow.run(query=query)
     finally:
         # Make sure to flush before the application exits
         instrumentor.flush()
-
-    return result
