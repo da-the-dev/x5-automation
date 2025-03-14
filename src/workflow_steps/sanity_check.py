@@ -1,8 +1,10 @@
+from llama_index.core.workflow import Context
+from src.workflow_events import DeduplicateEvent, SanityCheckEvent
+
 import json
 from os import getenv
 import openai
 import asyncio
-
 
 async def process_batch(
     llm, query_clean: str, batch: list[tuple[str, str]]
@@ -81,7 +83,6 @@ async def process_batch(
 
     return filtered_qa
 
-
 async def sanity_check(
     query_clean: str, qa_pairs: list[tuple[str, str]]
 ) -> list[tuple[str, str]]:
@@ -107,3 +108,10 @@ async def sanity_check(
     filtered_qa = [item for sublist in results for item in sublist]
 
     return filtered_qa
+
+async def sanity_check_step(ev: DeduplicateEvent, ctx: Context) -> SanityCheckEvent:
+    qa = ev.qa
+    query_clean = await ctx.get("query_clean")
+
+    sane_qa = await sanity_check(query_clean, qa)
+    return SanityCheckEvent(qa=sane_qa)

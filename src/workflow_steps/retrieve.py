@@ -1,11 +1,12 @@
+from llama_index.core.workflow import Context
+from src.workflow_events import PreprocessEvent, RetrieveEvent
+
 import os
 from os import getenv
 import aiohttp
 from qdrant_client import QdrantClient
 
-
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
-
 
 async def encode_query(query_clean: str) -> list[float]:
     embedder_endpoint = f"{getenv('VLLM_EMB_BASE_API')}/embeddings"
@@ -29,7 +30,6 @@ async def encode_query(query_clean: str) -> list[float]:
                 print(response.status)
                 print(response.content)
 
-
 def retrieve_points(query_embedding: list[float]):
     qdrant_client = QdrantClient(url=os.getenv("QDRANT_URL"))
 
@@ -42,7 +42,6 @@ def retrieve_points(query_embedding: list[float]):
 
     return search_result
 
-
 def process_points(points: list[dict]) -> list[tuple[str, str]]:
     qa_tuples = [
         (point.payload["question_clear"], point.payload["content_clear"])
@@ -50,10 +49,15 @@ def process_points(points: list[dict]) -> list[tuple[str, str]]:
     ]
     return qa_tuples
 
-
 async def retriever(query_clean: str) -> list[tuple[str, str]]:
     query_embedding = await encode_query(query_clean)
     search_result = retrieve_points(query_embedding)
     search_result_clear = process_points(search_result)
-
     return search_result_clear
+
+async def retrieve_step(ev: PreprocessEvent, ctx: Context) -> RetrieveEvent:
+    query_clean = ev.query_clean
+    await ctx.set("query_clean", query_clean)  # Saving clean query for use later
+
+    qa = await retriever(query_clean)
+    return RetrieveEvent(qa=qa)

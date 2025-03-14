@@ -1,3 +1,6 @@
+from llama_index.core.workflow import Context, StopEvent
+from src.workflow_events import HasQAExamplesEvent
+
 import json
 from os import getenv
 import openai
@@ -36,3 +39,10 @@ async def reply(query_clean: str, qa: list[tuple[str, str]]) -> str:
 
     # Return just the response content
     return response.choices[0].message.content
+
+async def reply_step(ev: HasQAExamplesEvent, ctx: Context) -> StopEvent:
+    qa = ev.qa
+    query_clean = await ctx.get("query_clean")
+
+    result = await reply(query_clean, qa)
+    return StopEvent(result=result)

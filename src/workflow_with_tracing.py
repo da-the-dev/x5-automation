@@ -1,8 +1,6 @@
 from os import getenv
 from langfuse.llama_index import LlamaIndexInstrumentor
-
 from src.workflow import AssistantFlow
-
 
 # Initialize the Langfuse instrumentor
 instrumentor = LlamaIndexInstrumentor(
@@ -10,7 +8,6 @@ instrumentor = LlamaIndexInstrumentor(
     secret_key=getenv("LANGFUSE_SECRET_KEY"),
     host=getenv("LANGFUSE_HOST"),
 )
-
 
 # Example of how to use the workflow with Langfuse tracing
 async def run_workflow_with_tracing(
@@ -27,7 +24,6 @@ async def run_workflow_with_tracing(
             user_id=user_id,
             metadata={
                 "query": query,
-                "llm": config["llm"],
             },
         ) as trace:
                 # Run your workflow

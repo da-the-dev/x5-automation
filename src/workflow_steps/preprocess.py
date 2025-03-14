@@ -1,17 +1,17 @@
+from llama_index.core.workflow import StartEvent
+from src.workflow_events import PreprocessEvent
+
 import pandas as pd
 import re
 import pymorphy3
 
 morph = pymorphy3.MorphAnalyzer()
 
-
 def clear_spaces_inside(text):
     words = text.split()
     words = list(map(lambda x: x.strip(), words))
     text_clear = " ".join(words)
-
     return text_clear
-
 
 def preprocess(text: str) -> str:
     greeting_words = {
@@ -131,3 +131,8 @@ def preprocess(text: str) -> str:
     filtered_text = " ".join(filtered_tokens)
     filtered_text = re.sub(r"\s+", " ", filtered_text)
     return filtered_text.strip()
+
+async def preprocess_step(ev: StartEvent) -> PreprocessEvent:
+    query = ev.query
+    query_clean = preprocess(query)
+    return PreprocessEvent(query_clean=query_clean)
