@@ -15,7 +15,7 @@ langfuse = Langfuse(
 def add_message(history: list, message: str):
     if message is not None or message != "":
         history.append({"role": "user", "content": message})
-    return history, gr.Textbox(value=None, interactive=False)
+    return history, gr.Textbox(value=None)
 
 async def bot(history: list):
     msg = {"role": "assistant", "content": ""}
