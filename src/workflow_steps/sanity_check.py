@@ -41,12 +41,15 @@ async def process_batch(
             documents_text += f"Документ {idx}:\nВопрос: {q}\nОтвет: {a}\n\n"
         
         messages = [
-            {"role": "system", "content": system_prompt},
+            # {"role": "user", "content": system_prompt},
             {
                 "role": "user",
-                "content": f"Запрос: '{query_clean}'\n\nДокументы:\n{documents_text}\n\nОцени релевантность каждого документа к этому запросу и верни массив из {len(batch)} элементов, где каждый элемент - '0' или '1'."
+                "content": f"{system_prompt}\n\nЗапрос: '{query_clean}'\n\nДокументы:\n{documents_text}\n\nОцени релевантность каждого документа к этому запросу и верни массив из {len(batch)} элементов, где каждый элемент - '0' или '1'."
             }
         ]
+        
+        print("MESSAGES")
+        print(messages)
 
     # Call the API with guided_json in extra_body
     response = await llm.chat.completions.create(
