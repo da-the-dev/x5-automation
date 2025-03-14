@@ -29,6 +29,18 @@ async def reply(query_clean: str, qa: list[tuple[str, str]]) -> str:
             {"role": "documents", "content": json.dumps(documents, ensure_ascii=False)},
             {"role": "user", "content": f"Запрос пользователя: {query_clean}"},
         ]
+    elif settings.llm.MODEL == "google/gemma-2-9b-it":
+        # For google/gemma-2-9b-it
+        examples_text = ""
+        for idx, doc in enumerate(documents):
+            examples_text += f"Пример {idx+1}:\nВопрос: {doc['question']}\nОтвет: {doc['answer']}\n\n"
+        
+        messages = [
+            {
+                "role": "user", 
+                "content": f"{system_prompt}\n\nПримеры вопросов и ответов:\n\n{examples_text}\n\nЗапрос пользователя: {query_clean}\n\nОтветь на запрос пользователя в том же стиле, что и приведенные примеры."
+            }
+        ]
     else:
         # For other models, format documents in prompt
         examples_text = ""
@@ -36,15 +48,15 @@ async def reply(query_clean: str, qa: list[tuple[str, str]]) -> str:
             examples_text += f"Пример {idx+1}:\nВопрос: {doc['question']}\nОтвет: {doc['answer']}\n\n"
         
         messages = [
-            # {"role": "user", "content": system_prompt},
+            {"role": "user", "content": system_prompt},
             {
                 "role": "user", 
-                "content": f"{system_prompt}\n\nПримеры вопросов и ответов:\n\n{examples_text}\n\nЗапрос пользователя: {query_clean}\n\nОтветь на запрос пользователя в том же стиле, что и приведенные примеры."
+                "content": f"Примеры вопросов и ответов:\n\n{examples_text}\n\nЗапрос пользователя: {query_clean}\n\nОтветь на запрос пользователя в том же стиле, что и приведенные примеры."
             }
         ]
         
-        print("MESSAGES")
-        print(messages)
+    print("MESSAGES")
+    print(messages)
 
     # Make async API call
     response = await llm.chat.completions.create(
