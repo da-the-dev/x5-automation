@@ -1,6 +1,5 @@
 # Third-party libraries
 from llama_index.core.workflow import (
-    Event,
     StartEvent,
     StopEvent,
     Workflow,
@@ -14,9 +13,7 @@ from src.workflow_events import (
     RetrieveEvent,
     DeduplicateEvent,
     SanityCheckEvent,
-    IsThereQAExamplesEvent,
     HasQAExamplesEvent,
-    GalaOtmenaEvent,
 )
 
 # Local imports - workflow steps
@@ -26,7 +23,7 @@ from src.workflow_steps.deduplicate import deduplicate_step
 from src.workflow_steps.sanity_check import sanity_check_step
 from src.workflow_steps.qa_examples import is_there_qa_examples_step
 from src.workflow_steps.reply import reply_step
-from src.workflow_steps.gala_otmena import gala_otmena_step
+
 
 class AssistantFlow(Workflow):
     @step
@@ -51,21 +48,8 @@ class AssistantFlow(Workflow):
     async def is_there_qa_examples(
         self, ev: SanityCheckEvent
     ) -> HasQAExamplesEvent | StopEvent:
-        qa = ev.qa
-        if len(qa) == 0:
-            return StopEvent(
-                "К сожалению, у меня недостаточно информации, чтобы ответить на ваш запрос. Переключаю на оператора..."
-            )
-        else:
-            return HasQAExamplesEvent(qa=qa)
+        return await is_there_qa_examples_step(ev)
 
     @step
     async def reply(self, ev: HasQAExamplesEvent, ctx: Context) -> StopEvent:
-        qa = ev.qa
-        query_clean = await ctx.get("query_clean")
-
-        from src.reply import reply
-
-        result = await reply(query_clean, qa)
-
-        return StopEvent(result)
+        return await reply_step(ev, ctx)
