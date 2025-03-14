@@ -1,24 +1,22 @@
-# Third-party libraries
 from langfuse.llama_index import LlamaIndexInstrumentor
 
-# Local imports
 from src.settings import settings
 from src.workflow import AssistantFlow
 
-# Initialize the Langfuse instrumentor
+
 instrumentor = LlamaIndexInstrumentor(
     public_key=settings.langfuse.PUBLIC_KEY,
     secret_key=settings.langfuse.SECRET_KEY,
     host=settings.langfuse.HOST,
 )
 
+
 async def run_workflow_with_tracing(
     query: str, session_id: str = None, user_id: str = None
 ):
     try:
-        # Start the instrumentation
         instrumentor.start()
-    
+
         # Use the context manager for tracing parameters
         with instrumentor.observe(
             trace_id=f"assistant-flow-{query[:10]}",

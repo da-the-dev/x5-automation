@@ -1,4 +1,3 @@
-# Third-party libraries
 from llama_index.core.workflow import (
     StartEvent,
     StopEvent,
@@ -7,7 +6,6 @@ from llama_index.core.workflow import (
     step,
 )
 
-# Local imports - event types
 from src.workflow_events import (
     PreprocessEvent,
     RetrieveEvent,
@@ -16,7 +14,6 @@ from src.workflow_events import (
     HasQAExamplesEvent,
 )
 
-# Local imports - workflow steps
 from src.workflow_steps.preprocess import preprocess_step
 from src.workflow_steps.retrieve import retrieve_step
 from src.workflow_steps.deduplicate import deduplicate_step
