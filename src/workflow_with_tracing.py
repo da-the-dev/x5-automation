@@ -27,7 +27,7 @@ async def run_workflow_with_tracing(
             user_id=user_id,
             metadata={
                 "query": query,
-                "llm": config["llm"],
+                "llm": getenv("VLLM_LLM_MODEL"),
             },
         ) as trace:
                 # Run your workflow
