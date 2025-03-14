@@ -7,7 +7,7 @@ import openai
 import asyncio
 
 async def process_batch(
-    llm, query_clean: str, batch: list[tuple[str, str]]
+    llm, query_clean: str, batch: list[tuple[str, str]], last_2_user_messages: list[dict]
 ) -> list[tuple[str, str]]:
     """Process a single batch of QA pairs and return the relevant ones."""
     # System prompt for grounded responses
@@ -29,7 +29,13 @@ async def process_batch(
         {"role": "documents", "content": json.dumps(documents, ensure_ascii=False)},
         {
             "role": "user",
-            "content": f"Запрос: '{query_clean}'. Оцени релевантность каждого документа к этому запросу и верни массив из {len(documents)} элементов, где каждый элемент - '0' или '1'.",
+            "content": (
+f"""
+Прошлые сообщения пользователя: '{"', '".join([msg['content'] for msg in last_2_user_messages])}'.
+Запрос пользователя: '{query_clean}'. 
+Оцени релевантность каждого документа к этому запросу с учетом контекста и верни массив из {len(documents)} элементов, где каждый элемент - '0' или '1'.
+"""
+            ),
         },
     ]
 
@@ -68,7 +74,7 @@ async def process_batch(
     return filtered_qa
 
 async def sanity_check(
-    query_clean: str, qa_pairs: list[tuple[str, str]]
+    query_clean: str, qa_pairs: list[tuple[str, str]], last_2_user_messages: list[dict]
 ) -> list[tuple[str, str]]:
     # Initialize LLM with OpenAI interface
     llm = openai.AsyncOpenAI(
@@ -85,7 +91,7 @@ async def sanity_check(
     ]
 
     # Process all batches concurrently
-    tasks = [process_batch(llm, query_clean, batch) for batch in batches]
+    tasks = [process_batch(llm, query_clean, batch, last_2_user_messages) for batch in batches]
     results = await asyncio.gather(*tasks)
 
     # Flatten the results
@@ -96,6 +102,12 @@ async def sanity_check(
 async def sanity_check_step(ev: DeduplicateEvent, ctx: Context) -> SanityCheckEvent:
     qa = ev.qa
     query_clean = await ctx.get("query_clean")
-
-    sane_qa = await sanity_check(query_clean, qa)
+    
+    # Get clear_history from context
+    clear_history = await ctx.get("clear_history")
+    
+    # Get last 2 user messages from clear_history
+    last_2_user_messages = [msg for msg in clear_history if msg["role"] == "user"][-2:]
+    
+    sane_qa = await sanity_check(query_clean, qa, last_2_user_messages)
     return SanityCheckEvent(qa=sane_qa)

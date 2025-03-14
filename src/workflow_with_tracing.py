@@ -12,8 +12,8 @@ instrumentor = LlamaIndexInstrumentor(
 
 
 async def run_workflow_with_tracing(
-    query: str, session_id: str = None, user_id: str = None
-):
+    query: str, clear_history: list = None, session_id: str = None, user_id: str = None
+) -> tuple[str, str]:
     try:
         instrumentor.start()
 
@@ -28,7 +28,11 @@ async def run_workflow_with_tracing(
             },
         ):
             workflow = AssistantFlow(timeout=3 * 60)
-            return await workflow.run(query=query)
+            response, clear_query = await workflow.run(
+                query=query,
+                clear_history=clear_history,
+            )
+            return response, clear_query
     finally:
         # Make sure to flush before the application exits
         instrumentor.flush()

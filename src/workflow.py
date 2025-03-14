@@ -24,7 +24,10 @@ from src.workflow_steps.reply import reply_step
 
 class AssistantFlow(Workflow):
     @step
-    async def preprocess(self, ev: StartEvent) -> PreprocessEvent:
+    async def preprocess(self, ev: StartEvent, ctx: Context) -> PreprocessEvent:
+        # Get clear_history from StartEvent and save to Context
+        clear_history = ev.clear_history
+        await ctx.set("clear_history", clear_history)
         return await preprocess_step(ev)
 
     @step

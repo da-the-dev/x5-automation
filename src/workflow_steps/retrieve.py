@@ -45,5 +45,16 @@ async def retriever(query_clean: str) -> list[tuple[str, str]]:
 async def retrieve_step(ev: PreprocessEvent, ctx: Context) -> RetrieveEvent:
     query_clean = ev.query_clean
     await ctx.set("query_clean", query_clean)  # Saving clean query for use later
-    qa = await retriever(query_clean)
+    
+    # Get clear_history from context
+    clear_history = await ctx.get("clear_history")
+    
+    # Get last 2 user messages from clear_history
+    last_2_user_messages = [msg for msg in clear_history if msg["role"] == "user"][-2:]
+    
+    # Concatenate last 2 user messages with current query
+    concatenated_query = "\n".join([msg["content"] for msg in last_2_user_messages] + [query_clean])
+    print("Query to retrieve:", concatenated_query)
+    
+    qa = await retriever(concatenated_query)
     return RetrieveEvent(qa=qa)
