@@ -1,15 +1,15 @@
+from llama_index.core.workflow import Context
+from src.workflow_events import DeduplicateEvent, SanityCheckEvent
+from src.settings import settings
+
 import json
-from os import getenv
 import openai
 import asyncio
-
 
 async def process_batch(
     llm, query_clean: str, batch: list[tuple[str, str]]
 ) -> list[tuple[str, str]]:
     """Process a single batch of QA pairs and return the relevant ones."""
-    filtered_qa = []
-
     # System prompt for grounded responses
     system_prompt = (
         "Твоя задача - определить, релевантны ли предоставленные документы запросу пользователя. "
@@ -33,62 +33,47 @@ async def process_batch(
         },
     ]
 
-    print("\n---- Processing batch ----")
-    for doc in documents:
-        print(f"Doc {doc['doc_id']}: {doc['title']} - {doc['content']}")
+    # Call the API with guided_json in extra_body
+    response = await llm.chat.completions.create(
+        model=settings.llm.MODEL,
+        messages=messages,
+        temperature=0.0,
+        extra_body={
+            "guided_json": {
+                "type": "array",
+                "items": {"type": "number", "enum": [0, 1]},
+            }
+        },
+    )
 
-    try:
-        # Call the API with guided_json in extra_body
-        response = await llm.chat.completions.create(
-            model=getenv("VLLM_LLM_MODEL"),
-            messages=messages,
-            temperature=0.0,
-            extra_body={
-                "guided_json": {
-                    "type": "array",
-                    "items": {"type": "number", "enum": [0, 1]},
-                }
-            },
-        )
+    # Extract response and parse scores
+    response_text = response.choices[0].message.content
+    scores = list(map(int, json.loads(response_text)))
 
-        # Extract response
-        response_text = response.choices[0].message.content
-        print("\n---- Response ----")
-        print(response_text)
+    # Ensure the length is correct
+    if len(scores) != len(batch):
+        if len(scores) < len(batch):
+            # If too short, extend with zeros
+            scores.extend([0] * (len(batch) - len(scores)))
+        else:
+            # If too long, truncate
+            scores = scores[: len(batch)]
 
-        # Parse the response as a JSON array and ensure all elements are integers
-        scores = list(map(int, json.loads(response_text)))
-
-        # Ensure the length is correct
-        if len(scores) != len(batch):
-            print(
-                f"Warning: Expected {len(batch)} scores but got {len(scores)}. Adjusting..."
-            )
-            if len(scores) < len(batch):
-                # If too short, extend with zeros
-                scores.extend([0] * (len(batch) - len(scores)))
-            else:
-                # If too long, truncate
-                scores = scores[: len(batch)]
-
-        # Add relevant QA pairs to results
-        for (q, a), score in zip(batch, scores):
-            if score == 1:  # Check for integer value
-                filtered_qa.append((q, a))
-
-    except Exception as e:
-        print(f"Error processing batch: {e}")
+    # Add relevant QA pairs to results
+    filtered_qa = []
+    for (q, a), score in zip(batch, scores):
+        if score == 1:  # Check for integer value
+            filtered_qa.append((q, a))
 
     return filtered_qa
-
 
 async def sanity_check(
     query_clean: str, qa_pairs: list[tuple[str, str]]
 ) -> list[tuple[str, str]]:
     # Initialize LLM with OpenAI interface
     llm = openai.AsyncOpenAI(
-        base_url=getenv("VLLM_LLM_BASE_API"),
-        api_key=getenv("VLLM_LLM_API_KEY"),
+        base_url=settings.llm.BASE_API,
+        api_key=settings.llm.API_KEY,
     )
 
     # Process QA pairs in batches
@@ -107,3 +92,10 @@ async def sanity_check(
     filtered_qa = [item for sublist in results for item in sublist]
 
     return filtered_qa
+
+async def sanity_check_step(ev: DeduplicateEvent, ctx: Context) -> SanityCheckEvent:
+    qa = ev.qa
+    query_clean = await ctx.get("query_clean")
+
+    sane_qa = await sanity_check(query_clean, qa)
+    return SanityCheckEvent(qa=sane_qa)

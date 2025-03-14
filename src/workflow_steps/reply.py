@@ -1,12 +1,15 @@
+from llama_index.core.workflow import Context, StopEvent
+from src.workflow_events import HasQAExamplesEvent
+from src.settings import settings
+
 import json
-from os import getenv
 import openai
 
 async def reply(query_clean: str, qa: list[tuple[str, str]]) -> str:
     # Initialize AsyncOpenAI client
     llm = openai.AsyncOpenAI(
-        base_url=getenv("VLLM_LLM_BASE_API"),
-        api_key=getenv("VLLM_LLM_API_KEY"),
+        base_url=settings.llm.BASE_API,
+        api_key=settings.llm.API_KEY,
     )
 
     # Format QA pairs as documents
@@ -28,7 +31,7 @@ async def reply(query_clean: str, qa: list[tuple[str, str]]) -> str:
 
     # Make async API call
     response = await llm.chat.completions.create(
-        model=getenv("VLLM_LLM_MODEL"),
+        model=settings.llm.MODEL,
         messages=messages,
         max_tokens=512,
         temperature=0.5,
@@ -36,3 +39,10 @@ async def reply(query_clean: str, qa: list[tuple[str, str]]) -> str:
 
     # Return just the response content
     return response.choices[0].message.content
+
+async def reply_step(ev: HasQAExamplesEvent, ctx: Context) -> StopEvent:
+    qa = ev.qa
+    query_clean = await ctx.get("query_clean")
+
+    result = await reply(query_clean, qa)
+    return StopEvent(result=result)

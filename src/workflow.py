@@ -1,3 +1,4 @@
+# Third-party libraries
 from llama_index.core.workflow import (
     Event,
     StartEvent,
@@ -7,85 +8,44 @@ from llama_index.core.workflow import (
     step,
 )
 
+# Local imports - event types
+from src.workflow_events import (
+    PreprocessEvent,
+    RetrieveEvent,
+    DeduplicateEvent,
+    SanityCheckEvent,
+    IsThereQAExamplesEvent,
+    HasQAExamplesEvent,
+    GalaOtmenaEvent,
+)
 
-class PreprocessEvent(Event):
-    query_clean: str
-
-
-class RetrieveEvent(Event):
-    qa: list[tuple[str, str]]
-
-
-class DeduplicateEvent(Event):
-    qa: list[tuple[str, str]]
-
-
-class SanityCheckEvent(Event):
-    qa: list[tuple[str, str]]
-
-
-class IsThereQAExamplesEvent(Event):
-    qa: list[tuple[str, str]]
-
-
-class HasQAExamplesEvent(Event):
-    qa: list[tuple[str, str]]
-
+# Local imports - workflow steps
+from src.workflow_steps.preprocess import preprocess_step
+from src.workflow_steps.retrieve import retrieve_step
+from src.workflow_steps.deduplicate import deduplicate_step
+from src.workflow_steps.sanity_check import sanity_check_step
+from src.workflow_steps.qa_examples import is_there_qa_examples_step
+from src.workflow_steps.reply import reply_step
+from src.workflow_steps.gala_otmena import gala_otmena_step
 
 class AssistantFlow(Workflow):
     @step
-    async def preprocess(self, ev: StartEvent) -> PreprocessEvent | StopEvent:
-        query = ev.query
-
-        from src.preprocess import preprocess
-
-        query_clean = preprocess(query)
-
-        if len(query_clean) <= 0:
-            return StopEvent(
-                "К сожалению, у меня недостаточно информации, чтобы ответить на ваш запрос. Переключаю на оператора..."
-            )
-
-        return PreprocessEvent(query_clean=query_clean)
+    async def preprocess(self, ev: StartEvent) -> PreprocessEvent:
+        return await preprocess_step(ev)
 
     @step
     async def retrieve(self, ev: PreprocessEvent, ctx: Context) -> RetrieveEvent:
-        query_clean = ev.query_clean
-        await ctx.set("query_clean", query_clean)  # Saving clean query for use later
-
-        from src.retriever import retriever
-
-        qa = await retriever(query_clean)
-
-        return RetrieveEvent(qa=qa)
+        return await retrieve_step(ev, ctx)
 
     @step
     async def deduplicate(self, ev: RetrieveEvent) -> DeduplicateEvent:
-        qa = ev.qa
-        unique_answers = set()
-        unique_qa_pairs = []
-        for pair in qa:
-            question, answer = pair[0], pair[1]
-            if answer in unique_answers:
-                continue
-            else:
-                unique_answers.add(answer)
-                unique_qa_pairs.append(tuple([question, answer]))
-
-        return DeduplicateEvent(qa=unique_qa_pairs)
+        return await deduplicate_step(ev)
 
     @step
     async def sanity_check(
         self, ev: DeduplicateEvent, ctx: Context
     ) -> SanityCheckEvent:
-        qa = ev.qa
-        query_clean = await ctx.get("query_clean")
-
-        from src.sanity_check import sanity_check
-
-        sane_qa = await sanity_check(query_clean, qa)
-
-        return SanityCheckEvent(qa=sane_qa)
+        return await sanity_check_step(ev, ctx)
 
     @step
     async def is_there_qa_examples(

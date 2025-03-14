@@ -1,3 +1,6 @@
+from llama_index.core.workflow import StartEvent
+from src.workflow_events import PreprocessEvent
+
 import pandas as pd
 import re
 import pymorphy3
@@ -143,3 +146,8 @@ def preprocess(text):
     filtered_text = ' '.join(filtered_tokens)
     filtered_text = re.sub(r'\s+', ' ', filtered_text)
     return filtered_text.strip()
+
+async def preprocess_step(ev: StartEvent) -> PreprocessEvent:
+    query = ev.query
+    query_clean = preprocess(query)
+    return PreprocessEvent(query_clean=query_clean)
