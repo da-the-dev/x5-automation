@@ -1,3 +1,4 @@
+# Third-party libraries
 from llama_index.core.workflow import (
     Event,
     StartEvent,
@@ -7,15 +8,7 @@ from llama_index.core.workflow import (
     step,
 )
 
-from src.workflow_steps.preprocess import preprocess_step
-from src.workflow_steps.retrieve import retrieve_step
-from src.workflow_steps.deduplicate import deduplicate_step
-from src.workflow_steps.sanity_check import sanity_check_step
-from src.workflow_steps.qa_examples import is_there_qa_examples_step
-from src.workflow_steps.reply import reply_step
-from src.workflow_steps.gala_otmena import gala_otmena_step
-
-# Re-export Event types for backward compatibility
+# Local imports - event types
 from src.workflow_events import (
     PreprocessEvent,
     RetrieveEvent,
@@ -25,6 +18,15 @@ from src.workflow_events import (
     HasQAExamplesEvent,
     GalaOtmenaEvent,
 )
+
+# Local imports - workflow steps
+from src.workflow_steps.preprocess import preprocess_step
+from src.workflow_steps.retrieve import retrieve_step
+from src.workflow_steps.deduplicate import deduplicate_step
+from src.workflow_steps.sanity_check import sanity_check_step
+from src.workflow_steps.qa_examples import is_there_qa_examples_step
+from src.workflow_steps.reply import reply_step
+from src.workflow_steps.gala_otmena import gala_otmena_step
 
 class AssistantFlow(Workflow):
     @step

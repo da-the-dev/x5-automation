@@ -1,8 +1,10 @@
+# Third-party libraries
 import gradio as gr
 from langfuse import Langfuse
 
-from src.workflow_with_tracing import run_workflow_with_tracing
+# Local imports
 from src.settings import settings
+from src.workflow_with_tracing import run_workflow_with_tracing
 
 langfuse = Langfuse(
     public_key=settings.langfuse.PUBLIC_KEY,
