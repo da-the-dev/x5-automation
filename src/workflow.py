@@ -32,18 +32,19 @@ class HasQAExamplesEvent(Event):
     qa: list[tuple[str, str]]
 
 
-class GalaOtmenaEvent(Event):
-    qa: list[tuple[str, str]]
-
-
 class AssistantFlow(Workflow):
     @step
-    async def preprocess(self, ev: StartEvent) -> PreprocessEvent:
+    async def preprocess(self, ev: StartEvent) -> PreprocessEvent | StopEvent:
         query = ev.query
 
         from src.preprocess import preprocess
 
         query_clean = preprocess(query)
+
+        if len(query_clean) <= 0:
+            return StopEvent(
+                "К сожалению, у меня недостаточно информации, чтобы ответить на ваш запрос. Переключаю на оператора..."
+            )
 
         return PreprocessEvent(query_clean=query_clean)
 
@@ -89,13 +90,12 @@ class AssistantFlow(Workflow):
     @step
     async def is_there_qa_examples(
         self, ev: SanityCheckEvent
-    ) -> HasQAExamplesEvent | GalaOtmenaEvent:
-        # Check if there are any QA examples
+    ) -> HasQAExamplesEvent | StopEvent:
         qa = ev.qa
-        # If there are QA examples, continue
         if len(qa) == 0:
-            return GalaOtmenaEvent(qa=qa)
-        # Else return GalaOtmena
+            return StopEvent(
+                "К сожалению, у меня недостаточно информации, чтобы ответить на ваш запрос. Переключаю на оператора..."
+            )
         else:
             return HasQAExamplesEvent(qa=qa)
 
@@ -108,10 +108,4 @@ class AssistantFlow(Workflow):
 
         result = await reply(query_clean, qa)
 
-        return StopEvent(result=result)
-
-    @step
-    async def gala_otmena(self, ev: GalaOtmenaEvent) -> StopEvent:
-        return StopEvent(
-            result="К сожалению, у меня недостаточно информации, чтобы ответить на ваш запрос. Переключаю на оператора..."
-        )
+        return StopEvent(result)
