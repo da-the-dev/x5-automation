@@ -71,4 +71,4 @@ with gr.Blocks(title="X5", fill_height=True) as demo:
 
     chatbot.like(print_like_dislike, chatbot, None, show_api=False)
 
-demo.launch()
+demo.launch(server_name='0.0.0.0')
