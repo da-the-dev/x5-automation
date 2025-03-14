@@ -1,8 +1,8 @@
 from llama_index.core.workflow import Context
 from src.workflow_events import DeduplicateEvent, SanityCheckEvent
+from src.settings import settings
 
 import json
-from os import getenv
 import openai
 import asyncio
 
@@ -42,7 +42,7 @@ async def process_batch(
     try:
         # Call the API with guided_json in extra_body
         response = await llm.chat.completions.create(
-            model=getenv("VLLM_LLM_MODEL"),
+            model=settings.llm.MODEL,
             messages=messages,
             temperature=0.0,
             extra_body={
@@ -88,8 +88,8 @@ async def sanity_check(
 ) -> list[tuple[str, str]]:
     # Initialize LLM with OpenAI interface
     llm = openai.AsyncOpenAI(
-        base_url=getenv("VLLM_LLM_BASE_API"),
-        api_key=getenv("VLLM_LLM_API_KEY"),
+        base_url=settings.llm.BASE_API,
+        api_key=settings.llm.API_KEY,
     )
 
     # Process QA pairs in batches

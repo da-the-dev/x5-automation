@@ -1,27 +1,19 @@
 import gradio as gr
 from langfuse import Langfuse
-from os import getenv
-from dotenv import find_dotenv, load_dotenv
 
 from src.workflow_with_tracing import run_workflow_with_tracing
-
-
-if not getenv("PROD"):
-    load_dotenv(find_dotenv())
-
+from src.settings import settings
 
 langfuse = Langfuse(
-    public_key=getenv("LANGFUSE_PUBLIC_KEY"),
-    secret_key=getenv("LANGFUSE_SECRET_KEY"),
-    host=getenv("LANGFUSE_HOST"),
+    public_key=settings.langfuse.PUBLIC_KEY,
+    secret_key=settings.langfuse.SECRET_KEY,
+    host=settings.langfuse.HOST,
 )
-
 
 def add_message(history: list, message: str):
     if message is not None or message != "":
         history.append({"role": "user", "content": message})
     return history, gr.Textbox(value=None, interactive=False)
-
 
 async def bot(history: list):
     msg = {"role": "assistant", "content": ""}
@@ -35,7 +27,6 @@ async def bot(history: list):
     history.append(msg)
     return history
 
-
 def print_like_dislike(history: gr.Chatbot, x: gr.LikeData):
     q = history[x.index - 1]["content"]
     a = history[x.index]["content"]
@@ -46,7 +37,6 @@ def print_like_dislike(history: gr.Chatbot, x: gr.LikeData):
         expected_output=a,
         metadata={"positive": x.liked},
     )
-
 
 with gr.Blocks(title="X5", fill_height=True) as demo:
     chatbot = gr.Chatbot(
@@ -71,6 +61,5 @@ with gr.Blocks(title="X5", fill_height=True) as demo:
     bot_msg = chat_msg.then(bot, [chatbot], chatbot, api_name="bot_response")
 
     chatbot.like(print_like_dislike, chatbot, None, show_api=False)
-
 
 demo.launch()
