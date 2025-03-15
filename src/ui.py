@@ -63,7 +63,14 @@ def print_like_dislike(history: gr.Chatbot, x: gr.LikeData):
 with gr.Blocks(title="X5", fill_height=True) as demo:
     clear_history = gr.State([])
 
+    title = gr.Markdown("# Чат поддержки X5")
     chatbot = gr.Chatbot(
+        value=[
+            {
+                "role": "assistant",
+                "content": 'Привет! Я бот поддержки X5. Можешь задать мне любой вопрос, например "Как выйти в отпуск?"',
+            }
+        ],
         elem_id="chatbot",
         type="messages",
         autoscroll=True,
@@ -75,6 +82,7 @@ with gr.Blocks(title="X5", fill_height=True) as demo:
         placeholder="Введите вопрос",
         interactive=True,
         show_label=False,
+        submit_btn=True,
     )
 
     clear = gr.ClearButton([chat_input, chatbot], value="Очистить")

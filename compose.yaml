@@ -13,6 +13,8 @@ services:
               count: all
               capabilities: [ gpu ]
     command: --model Vikhrmodels/Vikhr-Nemo-12B-Instruct-R-21-09-24 --dtype half --max_model_len 15000 --api-key token-123
+    # command: --model google/gemma-2-9b-it --api-key token-123 --dtype half
+    # command: --model IlyaGusev/saiga_nemo_12b --dtype half --max_model_len 15000 --api-key token-123
     networks:
       - x5
 
@@ -114,7 +116,7 @@ services:
       - "3000:3000"
     environment:
       <<: *langfuse-worker-env
-      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_URL: http://51.250.7.86:3000
       NEXTAUTH_SECRET: mysecret
       LANGFUSE_INIT_ORG_ID: ${LANGFUSE_INIT_ORG_ID:-}
       LANGFUSE_INIT_ORG_NAME: ${LANGFUSE_INIT_ORG_NAME:-}
