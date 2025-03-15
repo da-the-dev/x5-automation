@@ -13,11 +13,6 @@ async def reply(query_clean: str, qa: list[tuple[str, str]], clear_history: list
         api_key=settings.llm.API_KEY,
     )
 
-    # Format QA pairs as documents
-    documents = []
-    for idx, (q, a) in enumerate(qa):
-        documents.append({"doc_id": idx, "question": q, "answer": a})
-
     # Create chat messages
     system_prompt = (
         "Ты помощник, который дает ответы на основе предоставленных примеров вопросов и ответов."
@@ -27,17 +22,51 @@ async def reply(query_clean: str, qa: list[tuple[str, str]], clear_history: list
         "Если примеры вопросов и ответов не содержат релевантной для запроса информации, не придумывай ответ, а дай знать пользователю."
     )
 
-    # Base messages with system prompt
-    messages = [{"role": "system", "content": system_prompt}]
-    
-    # Add filtered chat history
-    messages.extend(clear_history)
-    
-    # Add current documents and query
-    messages.extend([
-        {"role": "documents", "content": json.dumps(documents, ensure_ascii=False)},
-        {"role": "user", "content": query_clean},
-    ])
+    if settings.llm.MODEL == "Vikhrmodels/Vikhr-Nemo-12B-Instruct-R-21-09-24":
+        # Format QA pairs as documents
+        documents = []
+        for idx, (q, a) in enumerate(qa):
+            documents.append({"doc_id": idx, "question": q, "answer": a})
+
+        # Base messages with system prompt
+        messages = [{"role": "system", "content": system_prompt}]
+        
+        # Add filtered chat history
+        messages.extend(clear_history)
+
+        # Add current documents and query
+        messages.extend([
+            {"role": "documents", "content": json.dumps(documents, ensure_ascii=False)},
+            {"role": "user", "content": query_clean},
+        ])
+
+    elif settings.llm.MODEL == "google/gemma-2-9b-it":
+        # For google/gemma-2-9b-it
+        examples_text = ""
+        for idx, doc in enumerate(documents):
+            examples_text += f"Пример {idx+1}:\nВопрос: {doc['question']}\nОтвет: {doc['answer']}\n\n"
+
+        # Add all messages and add system prompt to the first message and examples to last message
+        messages = clear_history + [{"role": "user", "content": query_clean}]
+        messages[-1]["content"] = f"Примеры вопросов и ответов:\n{examples_text}\n\nЗапрос пользователя: {messages[-1]['content']}"
+        messages[0]["content"] = f"{system_prompt}\n\n{messages[0]['content']}"
+
+    else:
+        # For other models, format documents in prompt
+        examples_text = ""
+        for idx, doc in enumerate(documents):
+            examples_text += f"Пример {idx+1}:\nВопрос: {doc['question']}\nОтвет: {doc['answer']}\n\n"
+        
+        # Base messages with system prompt
+        messages = [{"role": "system", "content": system_prompt}]
+        
+        # Add filtered chat history
+        messages.extend(clear_history)
+
+        # Add current documents and query
+        messages.extend([
+            {"role": "user", "content": f"Примеры вопросов и ответов:\n{examples_text}\n\nЗапрос пользователя: {query_clean}"},
+        ])
 
     print("\n--- Messages ---")
     for i, msg in enumerate(messages):

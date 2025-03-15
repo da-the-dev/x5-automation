@@ -18,26 +18,77 @@ async def process_batch(
         "а '0' - что нерелевантен. Массив должен иметь ровно столько элементов, сколько документов в запросе."
     )
 
-    # Format QA pairs as documents
-    documents = []
-    for idx, (q, a) in enumerate(batch):
-        documents.append({"doc_id": idx, "title": q, "content": a})
+    # If Vikhr model with documents role
+    if settings.llm.MODEL == "Vikhrmodels/Vikhr-Nemo-12B-Instruct-R-21-09-24":
+        # Format QA pairs as documents
+        documents = []
+        for idx, (q, a) in enumerate(batch):
+            documents.append({"doc_id": idx, "title": q, "content": a})
 
-    # Create chat messages
-    messages = [
-        {"role": "system", "content": system_prompt},
-        {"role": "documents", "content": json.dumps(documents, ensure_ascii=False)},
-        {
-            "role": "user",
-            "content": (
+        # Create chat messages
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "documents", "content": json.dumps(documents, ensure_ascii=False)},
+            {
+                "role": "user",
+                "content": (
 f"""
 Прошлые сообщения пользователя: '{"', '".join([msg['content'] for msg in last_2_user_messages])}'.
 Запрос пользователя: '{query_clean}'. 
 Оцени релевантность каждого документа к этому запросу с учетом контекста и верни массив из {len(documents)} элементов, где каждый элемент - '0' или '1'.
 """
-            ),
-        },
-    ]
+                ),
+            },
+        ]
+    
+    elif settings.llm.MODEL == "google/gemma-2-9b-it":
+        # For google/gemma-2-9b-it
+        documents_text = ""
+        for idx, (q, a) in enumerate(batch):
+            documents_text += f"Документ {idx}:\nВопрос: {q}\nОтвет: {a}\n\n"
+
+        # Create chat messages
+        messages = [
+            {
+                "role": "user",
+                "content": (
+f"""
+{system_prompt}\n\n
+Документы:\n{documents_text}\n\n
+Прошлые сообщения пользователя: '{"', '".join([msg['content'] for msg in last_2_user_messages])}'.
+Запрос пользователя: '{query_clean}'. 
+Оцени релевантность каждого документа к этому запросу с учетом контекста и верни массив из {len(documents)} элементов, где каждый элемент - '0' или '1'.
+"""
+                ),
+            },
+        ]
+
+    else:
+        # For other models, format documents in prompt
+        documents_text = ""
+        for idx, (q, a) in enumerate(batch):
+            documents_text += f"Документ {idx}:\nВопрос: {q}\nОтвет: {a}\n\n"
+
+        # Create chat messages
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {
+                "role": "user",
+                "content": (
+f"""
+Документы:\n{documents_text}\n\n
+Прошлые сообщения пользователя: '{"', '".join([msg['content'] for msg in last_2_user_messages])}'.
+Запрос пользователя: '{query_clean}'. 
+Оцени релевантность каждого документа к этому запросу с учетом контекста и верни массив из {len(documents)} элементов, где каждый элемент - '0' или '1'.
+"""
+                ),
+            },
+        ]
+
+    print("\n--- Messages ---")
+    for i, msg in enumerate(messages):
+        print(f"{i}: {msg['role']} - {msg['content']}")
+
 
     # Call the API with guided_json in extra_body
     response = await llm.chat.completions.create(
